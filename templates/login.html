@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | CampusConnect</title>
+    <meta name="description" content="Sign in to CampusConnect — your college club management portal.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="{{url_for('static',filename='login-style.css')}}">
+    <script src="{{ url_for('static', filename='login-script.js', dummy=1) }}"></script>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-card">
+
+            <!-- Portal pill label -->
+            <div class="meta-label">
+                <i class="fa-solid fa-circle-nodes"></i>
+                CampusConnect &middot; Portal
+            </div>
+
+            <!-- Header -->
+            <div class="login-header">
+                <h2>Welcome back</h2>
+                <p>Sign in to manage your clubs, events, and community.</p>
+            </div>
+
+            <!-- Error Message -->
+            <div id="login-error"
+                 class="error-message {% if not error %}hidden{% endif %}"
+                 aria-live="polite"
+                 role="alert">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>{% if error %}{{ error }}{% else %}Invalid email or password. Please try again.{% endif %}</span>
+            </div>
+
+            <!-- Login Form — Flask backend preserved exactly -->
+            <form id="login-form" action="/submit" method="POST">
+                <input type="hidden" name="next_url" value="{{ next_url or '' }}">
+
+                <!-- Email / College ID -->
+                <div class="input-group">
+                    <label for="email">Email or College ID</label>
+                    <div class="input-field">
+                        <i class="fa-regular fa-user"></i>
+                        <input type="text"
+                               id="email"
+                               name="Email"
+                               placeholder="Enter your email or ID"
+                               required
+                               autocomplete="username">
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="input-field">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password"
+                               name="Password"
+                               id="password"
+                               placeholder="Enter your password"
+                               required
+                               autocomplete="current-password">
+                        <button type="button"
+                                id="toggle-password"
+                                class="toggle-pwd-btn"
+                                aria-label="Toggle password visibility">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="forgot-pwd-container">
+                        <a href="#" class="forgot-pwd-link">Forgot Password?</a>
+                    </div>
+                </div>
+
+                <!-- Redirect info banner (Flask conditional) -->
+                {% if next_url %}
+                <div class="redirect-banner">
+                    <i class="fa-solid fa-circle-info"></i>
+                    After login you'll be redirected to the event registration form.
+                </div>
+                {% endif %}
+
+                <!-- Submit -->
+                <button type="submit" class="btn btn-primary btn-block" id="login-submit-btn">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    {% if next_url %}Login &amp; Register for Event{% else %}Sign In{% endif %}
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="divider"><span>OR</span></div>
+
+            <!-- Google Sign-In — logic fully preserved -->
+            <script src="https://accounts.google.com/gsi/client" async defer></script>
+            <script>
+                function handleCredentialResponse(response) {
+                    try {
+                        const responsePayload = JSON.parse(atob(response.credential.split('.')[1]));
+                        const email = responsePayload.email;
+                        const name = responsePayload.name;
+
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '/google_login';
+
+                        const emailInput = document.createElement('input');
+                        emailInput.type = 'hidden';
+                        emailInput.name = 'email';
+                        emailInput.value = email;
+
+                        const nameInput = document.createElement('input');
+                        nameInput.type = 'hidden';
+                        nameInput.name = 'name';
+                        nameInput.value = name;
+
+                        form.appendChild(emailInput);
+                        form.appendChild(nameInput);
+                        document.body.appendChild(form);
+                        form.submit();
+                    } catch(e) {
+                        document.getElementById('login-error').classList.remove('hidden');
+                        document.querySelector('#login-error span').textContent = "Google Sign-In Failed: " + e.message;
+                    }
+                }
+            </script>
+
+            <!-- Google button container — themed wrapper -->
+            <div class="social-auth">
+                <div id="g_id_onload"
+                     data-client_id="YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com"
+                     data-callback="handleCredentialResponse"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="signin_with"
+                     data-size="large"
+                     data-logo_alignment="left">
+                </div>
+            </div>
+
+            <!-- Register prompt -->
+            <div class="register-prompt">
+                Don't have an account?
+                <a href="{{url_for('reg')}}">Create one</a>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

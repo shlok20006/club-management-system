@@ -1,0 +1,14 @@
+gemini_venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.DS_Store
+htmlhint_output.txt
+.git/
+*.egg-info/
+dist/
+build/
+.vscode/
+.idea/

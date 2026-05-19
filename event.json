@@ -1,0 +1,30 @@
+{
+    "#E001": {
+        "club_id": "#C001",
+        "title": "Space Craft Master Class",
+        "date": "2026-04-20T12:46",
+        "location": "SH-12",
+        "registration_deadline": "2026-04-18",
+        "description": "We will build some small space craft ...",
+        "category": "tech",
+        "is_recruitment": false,
+        "status": "Published",
+        "thumbnail": "aerosp1.png",
+        "google_form_link": "https://docs.google.com/forms/d/e/1FAIpQLScNAqjSKyeWLEx5n0epfeMWO9ThTPgeH9utk4PY-fCk0QWBNQ/viewform?usp=header",
+        "pending_participants": []
+    },
+    "#E002": {
+        "club_id": "#C002",
+        "title": "Classical Music Event",
+        "date": "2026-04-28T01:46",
+        "location": "SH-10",
+        "registration_deadline": "2026-04-27",
+        "description": "The Music Club of MITS cordially invites you to an evening where heritage meets harmony. Join us for Classical Music Night, a curated celebration of Indian Classical Music featuring a breathtaking lineup of Master Gurus and Rising Stars.\r\n\r\nPrepare to be transported by the meditative strings of the Sitar, the rhythmic pulse of the Tabla, and the ethereal melodies of the Bansuri. Set against the iconic backdrop of the MITS Central Amphitheatre, this concert is designed to honor our rich cultural roots while showcasing the vibrant future of the genre.\r\n\r\nWhether you are a lifelong aficionado or a curious newcomer, we welcome all music enthusiasts to immerse themselves in this evening of raga and rhythm",
+        "category": "cultural",
+        "is_recruitment": false,
+        "status": "Published",
+        "thumbnail": "Gemini_Generated_Image_dwc5hxdwc5hxdwc5_1.png",
+        "google_form_link": "https://docs.google.com/forms/d/e/1FAIpQLScNAqjSKyeWLEx5n0epfeMWO9ThTPgeH9utk4PY-fCk0QWBNQ/viewform?usp=header",
+        "pending_participants": []
+    }
+}

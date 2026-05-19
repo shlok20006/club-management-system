@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ club.name if club else 'Manager Dashboard' }} - CampusConnect</title>
+    <meta name="description" content="Club management dashboard — CampusConnect.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='manager-style.css') }}">
+    <script src="{{ url_for('static', filename='manager-script.js', dummy=1) }}"></script>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar manager-sidebar">
+            <div class="sidebar-logo">
+                <i class="fa-solid fa-bolt"></i>
+                <span>{{ club.name if club else 'Club' }}</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="sidebar-section-label">Communication</div>
+                <button class="nav-item active" data-target="event-chat">
+                    <i class="fa-solid fa-comments"></i>
+                    <span>Event Chat</span>
+                </button>
+                <button class="nav-item" data-target="club-chat">
+                    <i class="fa-solid fa-users-viewfinder"></i>
+                    <span>Club Chat</span>
+                </button>
+
+                <div class="sidebar-section-label">Management</div>
+                <button class="nav-item" data-target="create-event">
+                    <i class="fa-solid fa-calendar-plus"></i>
+                    <span>Events</span>
+                </button>
+                <button class="nav-item" data-target="club-members">
+                    <i class="fa-solid fa-person-chalkboard"></i>
+                    <span>Members</span>
+                </button>
+                <button class="nav-item" data-target="club-profile">
+                    <i class="fa-solid fa-building-columns"></i>
+                    <span>Profile</span>
+                </button>
+
+                <div class="sidebar-spacer"></div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="{{ url_for('logout') }}" class="nav-item text-danger" style="text-decoration:none;">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Wrapper -->
+        <div class="main-wrapper">
+            <!-- Header Section -->
+            <header class="top-header">
+                <div class="header-context">
+                    <img src="{{ url_for('static', filename='uploads/clubs/' + club.logo) if club and club.logo else url_for('static', filename='assets/club_logo.png') }}"
+                        alt="{{ club.name if club else 'ByteClub' }}" class="header-club-logo"
+                        onerror="this.src=`{{ url_for('static', filename='assets/club_logo.png') }}`">
+                    <div class="header-breadcrumb">
+                        <span class="welcome-msg">Welcome back, <strong>{{ manager.name if manager else 'Manager' }}</strong></span>
+                        <span class="current-section-label" id="header-section-label">Event Chat</span>
+                    </div>
+                </div>
+                <div class="header-user">
+                    <button class="btn-icon" aria-label="Notifications"><i class="fa-regular fa-bell"></i></button>
+                    <div class="profile-icon">
+                        <img src="{{url_for('static',filename='assets/manager.png')}}" alt="Manager Profile"
+                            id="header-avatar" onerror="this.src='https://via.placeholder.com/40'">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="content-area">
+
+                <!-- Section 1: Current Event Members Chat -->
+                <section id="event-chat" class="content-section active">
+                    <div class="section-header">
+                        <span class="section-meta-label"><i class="fa-solid fa-signal"></i> &nbsp;Live</span>
+                        <h2>Event Members Chat</h2>
+                        {% set first_eid = none %}
+                        {% set first_ename = "No Event Available" %}
+                        {% set ns = namespace(eid=none, ename="No Event Available") %}
+                        {% if events %}
+                        {% for eid, e in events.items() %}
+                        {% if loop.first %}
+                        {% set ns.eid = eid %}
+                        {% set ns.ename = e.title %}
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                        {% set first_eid = ns.eid %}
+                        {% set first_ename = ns.ename %}
+                        <p>Communicating with registered participants for: <strong>{{ first_ename }}</strong></p>
+                    </div>
+
+                    <div class="chat-layout-container card">
+                        <!-- Sidebar list of participants -->
+                        <div class="chat-sidebar">
+                            <div class="chat-sidebar-header">
+                                <h3>Participants ({{ event_participants.get(first_eid, []) | length }})</h3>
+                                <div class="search-box">
+                                    <i class="fa-solid fa-search"></i>
+                                    <input type="text" placeholder="Search members...">
+                                </div>
+                            </div>
+                            <div class="member-list">
+                                {% if first_eid and event_participants.get(first_eid) %}
+                                {% for p in event_participants.get(first_eid, []) %}
+                                <div class="member-item">
+                                    <div class="avatar-sm avatar-initial bg-cobalt">{{ p.name[0].upper() if p.name else 'U' }}</div>
+                                    <div class="member-info">
+                                        <strong>{{ p.name }}</strong>
+                                        <span class="member-chip">{{ p.branch }}</span>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div style="padding: 1rem; color: #888; text-align: center; font-size: 0.85rem;">No
+                                    participants yet</div>
+                                {% endfor %}
+                                {% else %}
+                                <div style="padding: 1rem; color: #888; text-align: center; font-size: 0.85rem;">No
+                                    active events</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Main Chat Area -->
+                        <div class="chat-main" id="event-chat-main" data-eid="{{ first_eid if first_eid else '' }}">
+                            <div class="chat-history" id="event-chat-history">
+                                {% if first_eid %}
+                                <div class="chat-date-divider">Connecting...</div>
+                                {% else %}
+                                <div class="chat-date-divider">No active events to manage.</div>
+                                {% endif %}
+                            </div>
+                            <div class="chat-input-area">
+                                <button class="btn-icon"><i class="fa-solid fa-paperclip"></i></button>
+                                <input type="text" id="event-chat-input" placeholder="Type a message to event members..." {% if not first_eid %}disabled{% endif %}>
+                                <button class="btn-send" id="event-chat-send" {% if not first_eid %}disabled{% endif %}><i class="fa-solid fa-paper-plane"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Club Members Chat -->
+                <section id="club-chat" class="content-section">
+                    <div class="section-header">
+                        <span class="section-meta-label"><i class="fa-solid fa-hashtag"></i> &nbsp;General</span>
+                        <h2>Club Members Chat</h2>
+                        <p>Discussion and announcements for all {{ club.name if club else 'club' }} members.</p>
+                    </div>
+
+                    <div class="chat-layout-container card">
+                        <!-- Sidebar list of club members -->
+                        <div class="chat-sidebar">
+                            <div class="chat-sidebar-header">
+                                <h3>All Members (<span id="chat-sidebar-count">{{ club_members|length }}</span>)</h3>
+                                <button class="btn btn-outline btn-sm w-100 mt-2"><i class="fa-solid fa-bullhorn"></i>
+                                    New Announcement</button>
+                            </div>
+                            <div class="member-list" id="chat-sidebar-member-list">
+                                <div class="list-category">Manager</div>
+                                <div class="member-item active">
+                                    <div class="avatar-sm avatar-initial bg-purple">{{ manager.name[0].upper() if manager and manager.name else 'M' }}</div>
+                                    <div class="member-info">
+                                        <strong>{{ manager.name if manager else 'Manager' }}</strong>
+                                        <span class="member-chip">Admin</span>
+                                    </div>
+                                </div>
+                                <div class="list-category">Members</div>
+                                <div id="chat-sidebar-students">
+                                    {% for member in club_members %}
+                                    <div class="member-item">
+                                        <div class="avatar-sm avatar-initial bg-slate">{{ member.name[0].upper() if member.name else 'U' }}</div>
+                                        <div class="member-info">
+                                            <strong>{{ member.name }}</strong>
+                                            <span class="member-chip">{{ member.branch }}</span>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div style="padding: 1rem; color: #888; text-align: center; font-size: 0.85rem;">No
+                                        members yet</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Main Chat Area -->
+                        <div class="chat-main">
+                            <div class="chat-history" id="club-chat-history">
+                                <div class="announcement-banner">
+                                    <i class="fa-solid fa-thumbtack"></i>
+                                    <div>
+                                        <strong>Pinned Announcement:</strong> Welcome to the Club Members Chat!
+                                    </div>
+                                </div>
+                                <div class="chat-date-divider">Loading messages...</div>
+                            </div>
+                            <div class="chat-input-area">
+                                <input type="text" id="club-chat-input" placeholder="Message #general...">
+                                <button class="btn-send" id="club-chat-send"><i
+                                        class="fa-solid fa-paper-plane"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: Create New Event -->
+                <section id="create-event" class="content-section">
+                    <div class="section-header flex-between">
+                        <div>
+                            <span class="section-meta-label"><i class="fa-regular fa-calendar"></i> &nbsp;Events</span>
+                            <h2>Event Management</h2>
+                            <p>Create and manage club events.</p>
+                        </div>
+                        <button class="btn btn-primary"
+                            onclick="document.getElementById('event-form').scrollIntoView({behavior: 'smooth'})">
+                            <i class="fa-solid fa-plus"></i> New Event
+                        </button>
+                    </div>
+                    <!-- Existing Events Grid -->
+                    <h3 class="subsection-title">Active Events</h3>
+                    <div class="card-grid mb-4">
+                        {% if events %}
+                        {% for eid, event in events.items() %}
+                        <div class="card event-admin-card">
+                            <div class="card-image-wrapper">
+                                <img src="{{ url_for('static', filename='uploads/events/' ~ event.thumbnail) if event.thumbnail else url_for('static', filename='assets/hackathon_banner.png') }}"
+                                    alt="{{ event.title }}" class="card-image"
+                                    onerror="this.src='https://via.placeholder.com/400x200'">
+                                <span
+                                    class="badge badge-status {% if event.status == 'Published' %}bg-success{% else %}bg-secondary{% endif %}">{{
+                                    event.status }}</span>
+                            </div>
+                            <div class="card-body">
+                                <h3>{{ event.title }}</h3>
+                                <p class="text-sm text-secondary"><i class="fa-regular fa-calendar"></i> {{
+                                    event.date.replace('T', ' ') if event.date else 'TBD' }}</p>
+                                <div class="card-stats">
+                                    <div class="stat"><span class="val" id="reg-count-{{ eid }}">{{ reg_counts.get(eid,
+                                            0) }}</span> Registrations</div>
+                                </div>
+                            </div>
+                            <div class="card-actions-row">
+                                <!-- Edit Button -->
+                                <button class="btn btn-outline btn-sm edit-event-btn" data-eid="{{ eid }}"
+                                    data-title="{{ event.title | e }}" data-category="{{ event.category }}"
+                                    data-date="{{ event.date }}" data-location="{{ event.location | e }}"
+                                    data-deadline="{{ event.registration_deadline }}"
+                                    data-description="{{ event.description | e }}"
+                                    data-form="{{ event.google_form_link if event.google_form_link else '' }}"
+                                    data-status="{{ event.status }}">
+                                    <i class="fa-solid fa-pen"></i> Edit
+                                </button>
+                                <!-- Delete Button -->
+                                <form action="/manager/delete_event" method="POST" style="display:inline;"
+                                    onsubmit="return confirm('Delete this event?');">
+                                    <input type="hidden" name="event_id" value="{{ eid }}">
+                                    <button type="submit" class="btn btn-danger btn-sm"><i
+                                            class="fa-solid fa-trash"></i> Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <p class="text-secondary">No active events found. Create your first event below!</p>
+                        {% endif %}
+                    </div>
+
+                    <h3 class="subsection-title mt-4">Pending Event Registrations</h3>
+                    <div class="card form-card mb-4" id="pending-event-members-section">
+                        <div class="card-body">
+                            <div style="overflow-x:auto;">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Event</th>
+                                            <th>Participant Name</th>
+                                            <th>Email</th>
+                                            <th style="text-align:right;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pending-event-members-body">
+                                        {% set has_pending_events = false %}
+                                        {% for eid, members in pending_event_members.items() %}
+                                        {% for member in members %}
+                                        {% set has_pending_events = true %}
+                                        <tr>
+                                            <td>{{ events.get(eid, {}).get('title', 'Unknown Event') }}</td>
+                                            <td>{{ member.name }}</td>
+                                            <td>{{ member.email }}</td>
+                                            <td style="text-align:right;">
+                                                <button type="button" class="btn btn-info btn-sm view-profile-btn" onclick="viewStudentProfile('{{ member.email }}')" style="margin-bottom:4px;">Profile</button>
+                                                <button type="button" class="btn btn-success btn-sm approve-event-btn"
+                                                    data-email="{{ member.email }}"
+                                                    data-eventid="{{ eid }}" style="margin-bottom:4px;">Approve</button>
+                                                <button type="button" class="btn btn-danger btn-sm reject-event-btn"
+                                                    data-email="{{ member.email }}"
+                                                    data-eventid="{{ eid }}" style="margin-bottom:4px;">Reject</button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        {% endfor %}
+                                        {% if not has_pending_events %}
+                                        <tr>
+                                            <td colspan="4" style="padding:2rem; text-align:center; color:var(--text-dim);">No pending event registrations.</td>
+                                        </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Create Form -->
+                    <div class="card form-card" id="event-form">
+                        <div class="card-header">
+                            <h3>Create New Event</h3>
+                        </div>
+                        <form action="/manager/create_event" method="POST" class="event-create-form"
+                            enctype="multipart/form-data">
+                            <div class="form-row">
+                                <div class="form-group w-100">
+                                    <label>Event Title</label>
+                                    <input type="text" name="event_title"
+                                        placeholder="e.g., Intro to Machine Learning Workshop" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group half">
+                                    <label>Event Category</label>
+                                    <select name="event_cat" required>
+                                        <option value="">Select category...</option>
+                                        <option value="tech">Technology</option>
+                                        <option value="cultural">Cultural</option>
+                                        <option value="sports">Sports</option>
+                                        <option value="management">Management</option>
+                                        <option value="recruitment">Recruitment</option>
+                                    </select>
+                                </div>
+                                <div class="form-group half">
+                                    <label>Event Date & Time</label>
+                                    <input type="datetime-local" name="date" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group half">
+                                    <label>Location</label>
+                                    <input type="text" name="Location" placeholder="e.g., Main Auditorium or Zoom Link"
+                                        required>
+                                </div>
+                                <div class="form-group half">
+                                    <label>Registration Deadline</label>
+                                    <input type="date" name="Deadline" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group w-100">
+                                <label>Thumbnail Image Upload</label>
+                                <div class="file-upload-zone">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <p>Drag & drop image here or <strong>click to browse</strong></p>
+                                    <span class="text-sm text-secondary">Supports JPG, PNG (Max 5MB)</span>
+                                    <input type="file" name="thumbnail" accept=".jpg, .jpeg, .png">
+                                </div>
+                            </div>
+
+                            <div class="form-group w-100">
+                                <label>Event Description</label>
+                                <textarea rows="4" name="description"
+                                    placeholder="Describe the event, agenda, prerequisites..." required></textarea>
+                            </div>
+
+                            <div class="form-group w-100">
+                                <label>Google Form Link (Registration)</label>
+                                <div class="input-with-icon">
+                                    <input type="url" name="google_form_link"
+                                        placeholder="e.g., https://docs.google.com/forms/d/e/...">
+                                    <i class="fa-brands fa-google"></i>
+                                </div>
+                            </div>
+
+                            <div class="form-row align-center mt-2">
+                                <label class="toggle-switch">
+                                    <input name="reqruitment" type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                                <span class="toggle-label">Is this a recruitment drive?</span>
+                            </div>
+
+                            <div class="form-actions mt-4">
+                                <button type="button" class="btn btn-outline">Cancel</button>
+                                <div class="btn-group-right">
+                                    <button type="button" name="action" value="Draft" class="btn btn-secondary">Save
+                                        Draft</button>
+                                    <button type="submit" name="action" value="Published"
+                                        class="btn btn-primary">Publish Event</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Section 4: Club Members -->
+                <section id="club-members" class="content-section">
+                    <div class="section-header">
+                        <span class="section-meta-label"><i class="fa-solid fa-users"></i> &nbsp;Members</span>
+                        <h2>Membership Management</h2>
+                        <p>Add, remove, and view current members of your club.</p>
+                    </div>
+
+                    <!-- Pending Club Members -->
+                    <div class="card form-card mb-4" id="pending-club-members-section">
+                        <div class="card-header"
+                            style="display:flex; justify-content:space-between; align-items:center;">
+                            <h3>Pending Club Requests</h3>
+                            <div class="stat"><span class="val" id="pending-club-count">{{ pending_club_members|length
+                                    }}</span> Requests</div>
+                        </div>
+                        <div class="card-body">
+                            <div style="overflow-x:auto;">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Branch / Year</th>
+                                            <th style="text-align:right;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pending-club-members-body">
+                                        {% for member in pending_club_members %}
+                                        <tr>
+                                            <td>{{ member.name }}</td>
+                                            <td>{{ member.email }}</td>
+                                            <td>{{ member.branch }} ({{ member.year }})</td>
+                                            <td style="text-align:right;">
+                                                <button type="button" class="btn btn-info btn-sm view-profile-btn" onclick="viewStudentProfile('{{ member.email }}')" style="margin-bottom:4px;">Profile</button>
+                                                <button type="button" class="btn btn-success btn-sm approve-club-btn"
+                                                    data-email="{{ member.email }}" style="margin-bottom:4px;">Approve</button>
+                                                <button type="button" class="btn btn-danger btn-sm reject-club-btn"
+                                                    data-email="{{ member.email }}" style="margin-bottom:4px;">Reject</button>
+                                            </td>
+                                        </tr>
+                                        {% else %}
+                                        <tr>
+                                            <td colspan="4" style="padding:2rem; text-align:center; color:var(--text-dim);">No pending requests.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Club Members Section -->
+                    <div class="card form-card mb-4" id="club-members-section">
+                        <div class="card-header flex-between">
+                            <h3>Club Members</h3>
+                            <div class="stat"><span class="val" id="live-member-count">{{ club_members|length }}</span> Members</div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Add Member Form -->
+                            <form id="add-member-form-ajax" class="add-member-form">
+                                <input type="hidden" name="club_id" value="{{ my_cid }}">
+                                <div class="form-group">
+                                    <label>Add Member by Email</label>
+                                    <div class="input-with-icon">
+                                        <input type="email" name="member_email" placeholder="student@mitsgwl.ac.in"
+                                            required>
+                                        <i class="fa-solid fa-envelope"></i>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Add Member</button>
+                            </form>
+
+                            <!-- Members Table -->
+                            <div style="overflow-x:auto;">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Branch / Year</th>
+                                            <th style="text-align:right;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="members-table-body">
+                                        {% for member in club_members %}
+                                        <tr>
+                                            <td>{{ member.name }}</td>
+                                            <td>{{ member.email }}</td>
+                                            <td>{{ member.branch }} ({{ member.year }})</td>
+                                            <td style="text-align:right;">
+                                                <button type="button" class="btn btn-info btn-sm view-profile-btn" onclick="viewStudentProfile('{{ member.email }}')" style="margin-bottom:4px;">Profile</button>
+                                                <button type="button" class="btn btn-danger btn-sm remove-member-btn"
+                                                    data-email="{{ member.email }}" style="margin-bottom:4px;">Remove</button>
+                                            </td>
+                                        </tr>
+                                        {% else %}
+                                        <tr>
+                                            <td colspan="4" style="padding:2rem; text-align:center; color:var(--text-dim);">No members added yet.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 5: Club Profile -->
+                <section id="club-profile" class="content-section">
+                    <div class="section-header">
+                        <span class="section-meta-label"><i class="fa-solid fa-building-columns"></i> &nbsp;Profile</span>
+                        <h2>Club Profile Settings</h2>
+                        <p>Manage public-facing information for your club.</p>
+                    </div>
+
+                    <div class="profile-layout grid-layout">
+                        <!-- Left Column: Identity -->
+                        <div class="grid-col-sidebar">
+                            <div class="card p-4 text-center">
+                                <div class="club-logo-edit">
+                                    <form id="logoUploadForm" action="/manager/update_club_logo" method="POST"
+                                        enctype="multipart/form-data">
+                                        <input type="hidden" name="club_id" value="{{ my_cid }}">
+                                        <input type="file" id="clubLogoInput" name="club_logo" accept="image/*"
+                                            style="display:none;"
+                                            onchange="document.getElementById('logoUploadForm').submit()">
+                                        <img src="{{ url_for('static', filename='uploads/clubs/' ~ club.logo) if club and club.logo else url_for('static',filename='assets/club_logo.png') }}"
+                                            alt="Club Logo" class="profile-large-img mx-auto"
+                                            onerror="this.src='https://via.placeholder.com/150'">
+                                        <button class="btn-edit-logo" type="button"
+                                            onclick="document.getElementById('clubLogoInput').click()"><i
+                                                class="fa-solid fa-camera"></i></button>
+                                    </form>
+                                </div>
+                                <h3 class="mt-3">{{ club.name if club else 'My Club' }}</h3>
+                                <p class="text-secondary text-sm">{{ club.category if club else 'Category' }}</p>
+                                <div class="mt-4 stats-boxes">
+                                    <div class="stat-box">
+                                        <h4 id="profile-member-count">{{ club_members|length }}</h4>
+                                        <span>Members</span>
+                                    </div>
+                                    <div class="stat-box">
+                                        <h4>{{ events|length }}</h4>
+                                        <span>Events</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Details Edit -->
+                        <div class="grid-col-main">
+                            <div class="card p-4">
+                                <div class="flex-between mb-4">
+                                    <h3>Basic Information</h3>
+                                    <button class="btn btn-outline btn-sm"
+                                        onclick="document.getElementById('editClubModal').classList.remove('hidden')"><i
+                                            class="fa-solid fa-pen"></i> Edit</button>
+                                </div>
+
+                                <div class="info-group">
+                                    <label class="info-label">Club Name</label>
+                                    <div class="info-value">{{ club.name if club else 'My Club' }}</div>
+                                </div>
+
+                                <div class="info-group">
+                                    <label class="info-label">Category</label>
+                                    <div class="info-value">{{ club.category if club else 'Category' }}</div>
+                                </div>
+
+                                <div class="info-group border-none">
+                                    <label class="info-label">Manager Email</label>
+                                    <div class="info-value">{{ club.manager_email if club else 'example@mitsgwl.ac.in'
+                                        }}</div>
+                                </div>
+                            </div>
+
+                            <div class="card p-4 mt-4">
+                                <div class="flex-between mb-4">
+                                    <h3>Notable Achievements</h3>
+                                    <button class="btn btn-outline btn-sm"
+                                        onclick="document.getElementById('addAchievementModal').classList.remove('hidden')"><i
+                                            class="fa-solid fa-plus"></i> Add</button>
+                                </div>
+                                <ul class="achievement-list">
+                                    {% if club and club.get('achievements') %}
+                                    {% for ach in club.achievements %}
+                                    <li>
+                                        <i class="fa-solid {{ ach.icon|default('fa-trophy') }} text-accent"></i>
+                                        <div style="flex:1;">
+                                            <strong>{{ ach.title }}</strong>
+                                            <span class="text-sm text-secondary d-block">{{ ach.description }}</span>
+                                        </div>
+                                        <form action="/manager/delete_achievement" method="POST" style="display:inline;"
+                                            onsubmit="return confirm('Delete this achievement?');">
+                                            <input type="hidden" name="club_id" value="{{ my_cid }}">
+                                            <input type="hidden" name="index" value="{{ loop.index0 }}">
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                style="padding:0.25rem 0.6rem; border:none; background:transparent; color:#ef4444;"><i
+                                                    class="fa-solid fa-trash"></i></button>
+                                        </form>
+                                    </li>
+                                    {% endfor %}
+                                    {% else %}
+                                    <li
+                                        style="display:flex; justify-content:center; flex-direction:column; align-items:center; color:var(--text-secondary); padding:2rem 0; width:100%;">
+                                        <i class="fa-solid fa-trophy"
+                                            style="font-size:2rem; margin-bottom:0.5rem; opacity:0.5;"></i>
+                                        <p>No achievements added yet</p>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+
+                            <!-- Card: Club About & Instagram -->
+                            <div class="card p-4 mt-4">
+                                <div class="flex-between mb-4">
+                                    <h3><i class="fa-solid fa-circle-info" style="color:var(--accent-blue, #3d6fff); margin-right:8px;"></i>About & Social</h3>
+                                </div>
+
+                                <form action="/manager/update_club_details" method="POST">
+                                    <input type="hidden" name="club_id" value="{{ my_cid }}">
+
+                                    <div class="info-group">
+                                        <label class="info-label">Club Description</label>
+                                        <textarea name="about" rows="4"
+                                            placeholder="Write a short description of your club — mission, activities, what makes it unique..."
+                                            style="width:100%; padding:10px 14px; border:1.5px solid var(--border-color);
+                                                   border-radius:10px; font-size:0.88rem; color:var(--text-primary);
+                                                   background:var(--bg-surface); resize:vertical; outline:none;
+                                                   font-family:inherit; line-height:1.55; transition:border-color 0.2s;"
+                                            onfocus="this.style.borderColor='var(--accent-blue,#3d6fff)'"
+                                            onblur="this.style.borderColor='var(--border-color)'"
+                                            >{{ club.about if club and club.about else '' }}</textarea>
+                                    </div>
+
+                                    <div class="info-group mt-3" style="border-bottom:none;">
+                                        <label class="info-label"><i class="fa-brands fa-instagram" style="color:#e1306c; margin-right:5px;"></i>Instagram Link</label>
+                                        <div class="input-with-icon">
+                                            <input type="url" name="instagram"
+                                                placeholder="https://www.instagram.com/yourclub"
+                                                value="{{ club.instagram if club and club.instagram else '' }}"
+                                                style="width:100%;">
+                                            <i class="fa-brands fa-instagram" style="color:#e1306c;"></i>
+                                        </div>
+                                        {% if club and club.instagram %}
+                                        <div style="margin-top:8px;">
+                                            <a href="{{ club.instagram }}" target="_blank" rel="noopener"
+                                               style="display:inline-flex; align-items:center; gap:6px; font-size:0.82rem;
+                                                      color:#e1306c; text-decoration:none; font-weight:600;">
+                                                <i class="fa-brands fa-instagram"></i> View Instagram
+                                            </a>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="form-actions mt-4" style="justify-content:flex-end;">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa-solid fa-floppy-disk"></i> Save Details
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+
+    <!-- Edit Club Modal -->
+    <div id="editClubModal" class="modal-glass hidden">
+        <div class="modal-content">
+            <button class="close-modal" onclick="document.getElementById('editClubModal').classList.add('hidden')" aria-label="Close">&times;</button>
+            <h2>Edit Club Information</h2>
+            <form action="/manager/edit_club" method="POST">
+                <input type="hidden" name="club_id" value="{{ my_cid }}">
+                <div class="form-group mt-3" style="width:100%;text-align:left;">
+                    <label>Club Name</label>
+                    <input type="text" name="club_name" class="form-control" value="{{ club.name if club else '' }}" required
+                        style="width:100%; padding:0.5rem; margin-top:0.25rem; border-radius:4px; border:1px solid var(--border-color);">
+                </div>
+                <div class="form-group mt-2" style="width:100%;text-align:left;">
+                    <label>Category</label>
+                    <select name="category" class="form-control" required
+                        style="width:100%; padding:0.5rem; margin-top:0.25rem; border-radius:4px; border:1px solid var(--border-color); background:var(--bg-surface); color:var(--text-primary);">
+                        <option value="Tech" {% if club and club.category == "Tech" %}selected{% endif %}>Tech</option>
+                        <option value="Cultural" {% if club and club.category == "Cultural" %}selected{% endif %}>Cultural</option>
+                        <option value="Sports" {% if club and club.category == "Sports" %}selected{% endif %}>Sports</option>
+                        <option value="Management" {% if club and club.category == "Management" %}selected{% endif %}>Management</option>
+                        <option value="Recruitment" {% if club and club.category == "Recruitment" %}selected{% endif %}>Recruitment</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3 w-100">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Add Achievement Modal -->
+    <div id="addAchievementModal" class="modal-glass hidden">
+        <div class="modal-content">
+            <button class="close-modal" onclick="document.getElementById('addAchievementModal').classList.add('hidden')" aria-label="Close">&times;</button>
+            <h2>Add Achievement</h2>
+            <form action="/manager/add_achievement" method="POST">
+                <input type="hidden" name="club_id" value="{{ my_cid }}">
+                <div class="form-group mt-3" style="width:100%;text-align:left;">
+                    <label>Title</label>
+                    <input type="text" name="title" class="form-control" placeholder="e.g. Best Technical Club 2025"
+                        required>
+                </div>
+                <div class="form-group mt-2" style="width:100%;text-align:left;">
+                    <label>Description</label>
+                    <input type="text" name="description" class="form-control"
+                        placeholder="Awarded by the University Student Council" required>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3 w-100">Add Achievement</button>
+            </form>
+        </div>
+    </div>
+    <style>
+        .hidden {
+            display: none !important;
+        }
+    </style>
+
+    <!-- Edit Event Modal -->
+    <div id="editEventModal" class="modal-glass hidden">
+        <div class="modal-content" style="max-width: 600px;">
+            <button class="close-modal" onclick="document.getElementById('editEventModal').classList.add('hidden')" aria-label="Close">&times;</button>
+            <h2><i class="fa-solid fa-pen" style="margin-right:0.5rem;"></i>Edit Event</h2>
+            <form action="/manager/update_event" method="POST">
+                <input type="hidden" name="event_id" id="edit-event-id">
+                <div class="form-group w-100" style="margin-bottom:1rem;">
+                    <label>Event Title</label>
+                    <input type="text" name="event_title" id="edit-event-title" required style="width:100%;">
+                </div>
+                <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                    <div class="form-group" style="flex:1; min-width:160px; margin-bottom:1rem;">
+                        <label>Category</label>
+                        <select name="event_cat" id="edit-event-cat" required style="width:100%;">
+                            <option value="tech">Technology</option>
+                            <option value="cultural">Cultural</option>
+                            <option value="sports">Sports</option>
+                            <option value="management">Management</option>
+                            <option value="recruitment">Recruitment</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:1; min-width:160px; margin-bottom:1rem;">
+                        <label>Status</label>
+                        <select name="action" id="edit-event-status" style="width:100%;">
+                            <option value="Published">Published</option>
+                            <option value="Draft">Draft</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                    <div class="form-group" style="flex:1; min-width:160px; margin-bottom:1rem;">
+                        <label>Event Date &amp; Time</label>
+                        <input type="datetime-local" name="date" id="edit-event-date" required style="width:100%;">
+                    </div>
+                    <div class="form-group" style="flex:1; min-width:160px; margin-bottom:1rem;">
+                        <label>Registration Deadline</label>
+                        <input type="date" name="Deadline" id="edit-event-deadline" style="width:100%;">
+                    </div>
+                </div>
+                <div class="form-group w-100" style="margin-bottom:1rem;">
+                    <label>Location</label>
+                    <input type="text" name="Location" id="edit-event-location" style="width:100%;" required>
+                </div>
+                <div class="form-group w-100" style="margin-bottom:1rem;">
+                    <label>Description</label>
+                    <textarea rows="3" name="description" id="edit-event-desc" style="width:100%;" required></textarea>
+                </div>
+                <div class="form-group w-100" style="margin-bottom:1.5rem;">
+                    <label>Google Form Link</label>
+                    <div class="input-with-icon">
+                        <input type="url" name="google_form_link" id="edit-event-form" style="width:100%;"
+                            placeholder="https://docs.google.com/forms/...">
+                        <i class="fa-brands fa-google"></i>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Student Profile Modal -->
+    <div id="studentProfileModal" class="modal-glass hidden">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="close-modal" onclick="document.getElementById('studentProfileModal').classList.add('hidden')" aria-label="Close">&times;</button>
+            <h2>Student Profile</h2>
+            <div id="studentProfileContent">
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update header section label on nav switch
+        const sectionLabels = {
+            'event-chat': 'Event Chat',
+            'club-chat': 'Club Chat',
+            'create-event': 'Event Management',
+            'club-members': 'Members',
+            'club-profile': 'Club Profile'
+        };
+        document.querySelectorAll('.nav-item[data-target]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const label = document.getElementById('header-section-label');
+                if (label) label.textContent = sectionLabels[btn.dataset.target] || '';
+            });
+        });
+
+        // Wire up Edit buttons via data-* attributes
+        document.querySelectorAll('.edit-event-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.getElementById('edit-event-id').value = btn.dataset.eid;
+                document.getElementById('edit-event-title').value = btn.dataset.title;
+                document.getElementById('edit-event-date').value = btn.dataset.date;
+                document.getElementById('edit-event-location').value = btn.dataset.location;
+                document.getElementById('edit-event-deadline').value = btn.dataset.deadline;
+                document.getElementById('edit-event-desc').value = btn.dataset.description;
+                document.getElementById('edit-event-form').value = btn.dataset.form;
+                const catEl = document.getElementById('edit-event-cat');
+                for (let opt of catEl.options) { opt.selected = opt.value === btn.dataset.category; }
+                const statusEl = document.getElementById('edit-event-status');
+                for (let opt of statusEl.options) { opt.selected = opt.value === btn.dataset.status; }
+                document.getElementById('editEventModal').classList.remove('hidden');
+            });
+        });
+
+        // Refresh event registration counts every 30 seconds
+        function refreshCounts() {
+            document.querySelectorAll('[id^="reg-count-"]').forEach(el => {
+                const eid = el.id.replace('reg-count-', '');
+                fetch('/api/event_count?event_id=' + encodeURIComponent(eid))
+                    .then(r => r.json())
+                    .then(data => { el.textContent = data.count; })
+                    .catch(() => { });
+            });
+        }
+        setInterval(refreshCounts, 30000);
+
+        // Refresh club members every 5 seconds
+        const myCid = "{{ my_cid }}";
+        function refreshMembers() {
+            if (!myCid) return;
+            fetch('/api/club_members?club_id=' + encodeURIComponent(myCid))
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('live-member-count').textContent = data.count;
+                    const pmc = document.getElementById('profile-member-count');
+                    if (pmc) pmc.textContent = data.count;
+
+                    const sidebarCount = document.getElementById('chat-sidebar-count');
+                    if (sidebarCount) sidebarCount.textContent = data.count;
+
+                    const sidebarStudents = document.getElementById('chat-sidebar-students');
+                    if (sidebarStudents) {
+                        if (data.count === 0) {
+                            sidebarStudents.innerHTML = '<div style="padding: 1rem; color: #888; text-align: center; font-size: 0.85rem;">No members yet</div>';
+                        } else {
+                            sidebarStudents.innerHTML = data.members.map(m => `
+                                <div class="member-item">
+                                    <div class="avatar-sm avatar-initial bg-slate">${m.name ? m.name.charAt(0).toUpperCase() : 'U'}</div>
+                                    <div class="member-info">
+                                        <strong>${m.name}</strong>
+                                        <span>${m.branch} • ${m.year}</span>
+                                    </div>
+                                </div>
+                            `).join('');
+                        }
+                    }
+
+                    const tbody = document.getElementById('members-table-body');
+                    if (tbody) {
+                        if (data.count === 0) {
+                            tbody.innerHTML = '<tr><td colspan="4" style="padding:2rem; text-align:center; color:var(--text-dim);">No members added yet.</td></tr>';
+                        } else {
+                            tbody.innerHTML = data.members.map(m => `
+                                <tr>
+                                    <td>${m.name}</td>
+                                    <td>${m.email}</td>
+                                    <td>${m.branch} (${m.year})</td>
+                                    <td style="text-align:right;">
+                                        <button type="button" class="btn btn-info btn-sm view-profile-btn" onclick="viewStudentProfile('${m.email}')" style="margin-bottom:4px;">Profile</button>
+                                        <button type="button" class="btn btn-danger btn-sm remove-member-btn" data-email="${m.email}" style="margin-bottom:4px;">Remove</button>
+                                    </td>
+                                </tr>
+                            `).join('');
+                        }
+                    }
+                })
+                .catch(() => { });
+        }
+        setInterval(refreshMembers, 5000);
+
+        // AJAX Add Member
+        const addMemberForm = document.getElementById('add-member-form-ajax');
+        if (addMemberForm) {
+            addMemberForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const emailInput = addMemberForm.querySelector('[name="member_email"]');
+                const formData = new FormData(addMemberForm);
+                fetch('/manager/add_member', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(r => r.json())
+                    .then((data) => {
+                        if (data.status === 'success') {
+                            emailInput.value = '';
+                            refreshMembers(); // instantly update display
+                        } else {
+                            alert(data.message || 'Error adding member. Ensure the user exists.');
+                        }
+                    })
+                    .catch(err => alert('Network error adding member.'));
+            });
+        }
+
+        // AJAX Remove Member (Event Delegation)
+        document.addEventListener('click', e => {
+            if (e.target.classList.contains('remove-member-btn')) {
+                const email = e.target.getAttribute('data-email');
+                if (confirm('Remove this member?')) {
+                    const formData = new FormData();
+                    formData.append('club_id', myCid);
+                    formData.append('member_email', email);
+                    fetch('/manager/remove_member', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(r => r.json())
+                        .then((data) => {
+                            if (data.status === 'success') {
+                                refreshMembers(); // instantly update display
+                            } else {
+                                alert(data.message || 'Error removing member.');
+                            }
+                        })
+                        .catch(err => alert('Network error removing member.'));
+                }
+            }
+        });
+
+        // Chat logic
+        const chatHistory = document.getElementById('club-chat-history');
+        const chatInput = document.getElementById('club-chat-input');
+        const chatSendBtn = document.getElementById('club-chat-send');
+        const managerName = ("{{ manager.name if (manager and manager.name) else 'Manager' }}").trim();
+        let clubPollRequestId = 0;
+
+        function pollChat() {
+            if (!myCid) return;
+            const myRequestId = ++clubPollRequestId;
+            fetch('/api/chat/get?club_id=' + encodeURIComponent(myCid))
+                .then(r => r.json())
+                .then(data => {
+                    if (myRequestId !== clubPollRequestId) return; // Stale result
+                    if (data.messages && chatHistory) {
+                        chatHistory.innerHTML = `
+                            <div class="announcement-banner">
+                                <i class="fa-solid fa-thumbtack"></i>
+                                <div><strong>Pinned:</strong> Welcome to the Club Members Chat!</div>
+                            </div>
+                        `;
+                        data.messages.forEach(msg => {
+                            const isSent = (msg.sender || "").trim() === managerName;
+                            const msgHtml = `
+                                <div class="chat-msg ${isSent ? 'sent' : 'received'}">
+                                    <div class="msg-content" style="max-width: 80%;">
+                                        <strong>${msg.sender} ${isSent ? '(Manager)' : ''}</strong>
+                                        <p style="margin: 0.25rem 0 0 0;">${msg.message}</p>
+                                        <span class="time" style="display: block; font-size: 0.75rem; opacity: 0.7; margin-top: 0.25rem; text-align: ${isSent ? 'right' : 'left'}">${msg.time}</span>
+                                    </div>
+                                </div>
+                            `;
+                            chatHistory.insertAdjacentHTML('beforeend', msgHtml);
+                        });
+                        chatHistory.scrollTop = chatHistory.scrollHeight;
+                    }
+                }).catch(e => console.error("Chat poll err:", e));
+        }
+
+        setInterval(pollChat, 3000);
+        if (myCid) pollChat();
+
+        const sendChatMessage = () => {
+            if (!chatInput || !myCid) return;
+            const msg = chatInput.value.trim();
+            if (msg) {
+                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                fetch('/api/chat/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ club_id: myCid, sender: managerName, message: msg, time: time })
+                }).then(() => {
+                    chatInput.value = '';
+                    pollChat();
+                });
+            }
+        };
+
+        if (chatSendBtn) chatSendBtn.addEventListener('click', sendChatMessage);
+        if (chatInput) chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendChatMessage();
+        });
+
+        // Handle Approval/Rejection Actions
+        document.addEventListener('click', e => {
+            if (e.target.classList.contains('approve-club-btn') || e.target.classList.contains('reject-club-btn')) {
+                const action = e.target.classList.contains('approve-club-btn') ? 'approve' : 'reject';
+                const email = e.target.getAttribute('data-email');
+                if (confirm(action === 'approve' ? 'Approve this member?' : 'Reject this request?')) {
+                    fetch('/manager/approve_club_member', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ club_id: myCid, member_email: email, action: action })
+                    })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                window.location.reload();
+                            } else {
+                                alert('Error processing request.');
+                            }
+                        });
+                }
+            }
+
+            if (e.target.classList.contains('approve-event-btn') || e.target.classList.contains('reject-event-btn')) {
+                const action = e.target.classList.contains('approve-event-btn') ? 'approve' : 'reject';
+                const email = e.target.getAttribute('data-email');
+                const eventId = e.target.getAttribute('data-eventid');
+                if (confirm(action === 'approve' ? 'Approve this registration?' : 'Reject this registration?')) {
+                    fetch('/manager/approve_event_member', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ event_id: eventId, member_email: email, action: action })
+                    })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                window.location.reload();
+                            } else {
+                                alert('Error processing request.');
+                            }
+                        });
+                }
+            }
+        });
+
+        // === Event Chat Live Polling (Manager) ===
+        const eventChatMain = document.getElementById('event-chat-main');
+        const eventFirstEid = eventChatMain ? eventChatMain.getAttribute('data-eid') : '';
+        const eventChatHistory = document.getElementById('event-chat-history');
+        const eventChatInput = document.getElementById('event-chat-input');
+        const eventChatSendBtn = document.getElementById('event-chat-send');
+        let eventPollRequestId = 0;
+
+        function pollEventChat() {
+            if (!eventFirstEid) return;
+            const myRequestId = ++eventPollRequestId;
+            fetch('/api/event_chat/get?event_id=' + encodeURIComponent(eventFirstEid))
+                .then(r => r.json())
+                .then(data => {
+                    if (myRequestId !== eventPollRequestId) return; // Stale result
+                    if (!eventChatHistory) return;
+                    if (data.messages && data.messages.length > 0) {
+                        eventChatHistory.innerHTML = '';
+                        const today = new Date().toLocaleDateString();
+                        eventChatHistory.insertAdjacentHTML('beforeend', `<div class="chat-date-divider">Today</div>`);
+                        data.messages.forEach(msg => {
+                            const isSent = (msg.sender || "").trim() === managerName;
+                            if (isSent) {
+                                eventChatHistory.insertAdjacentHTML('beforeend', `
+                                    <div class="chat-msg sent">
+                                        <div class="msg-content">
+                                            <strong>${msg.sender}</strong>
+                                            <p>${msg.message}</p>
+                                            <span class="time">${msg.time}</span>
+                                        </div>
+                                    </div>`);
+                            } else {
+                                const initials = msg.sender ? msg.sender.charAt(0).toUpperCase() : '?';
+                                eventChatHistory.insertAdjacentHTML('beforeend', `
+                                    <div class="chat-msg received">
+                                        <div class="chat-avatar avatar-initial bg-blue">${initials}</div>
+                                        <div class="msg-content">
+                                            <strong>${msg.sender}</strong>
+                                            <p>${msg.message}</p>
+                                            <span class="time">${msg.time}</span>
+                                        </div>
+                                    </div>`);
+                            }
+                        });
+                        eventChatHistory.scrollTop = eventChatHistory.scrollHeight;
+                    } else if (data.messages && data.messages.length === 0) {
+                        eventChatHistory.innerHTML = '<div class="chat-date-divider">No messages yet. Be the first to say hello!</div>';
+                    }
+                }).catch(e => console.error('Event chat poll error:', e));
+        }
+
+        function sendEventChatMessage() {
+            if (!eventChatInput || !eventFirstEid) return;
+            const msg = eventChatInput.value.trim();
+            if (!msg) return;
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            fetch('/api/event_chat/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ event_id: eventFirstEid, sender: managerName, message: msg, time: time })
+            }).then(() => {
+                eventChatInput.value = '';
+                pollEventChat();
+            });
+        }
+
+        if (eventChatSendBtn) {
+            eventChatSendBtn.addEventListener('click', sendEventChatMessage);
+        }
+        if (eventChatInput) {
+            eventChatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendEventChatMessage(); });
+        }
+
+        if (eventFirstEid) {
+            pollEventChat();
+            setInterval(pollEventChat, 3000);
+        }
+
+        function viewStudentProfile(email) {
+            const modal = document.getElementById('studentProfileModal');
+            const content = document.getElementById('studentProfileContent');
+            modal.classList.remove('hidden');
+            content.innerHTML = '<p>Loading...</p>';
+            fetch('/api/student_profile?email=' + encodeURIComponent(email))
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        content.innerHTML = `<p style="color:red;">Error: ${data.error}</p>`;
+                        return;
+                    }
+                    let linksHtml = '';
+                    if (data.github) linksHtml += `<a href="${data.github}" target="_blank" style="margin-right:12px;text-decoration:none;"><i class="fa-brands fa-github" style="font-size:1.2rem;"></i> GitHub</a>`;
+                    if (data.linkedin) linksHtml += `<a href="${data.linkedin}" target="_blank" style="margin-right:12px; color:#0a66c2;text-decoration:none;"><i class="fa-brands fa-linkedin" style="font-size:1.2rem;"></i> LinkedIn</a>`;
+                    if (data.instagram) linksHtml += `<a href="${data.instagram}" target="_blank" style="color:#e1306c;text-decoration:none;"><i class="fa-brands fa-instagram" style="font-size:1.2rem;"></i> Instagram</a>`;
+                    if (!linksHtml) linksHtml = '<span class="text-secondary">No links provided</span>';
+                    
+                    content.innerHTML = `
+                        <div style="margin-bottom:15px; border-bottom:1px solid var(--border-color); padding-bottom:15px;">
+                            <h3 style="margin-bottom:5px; color:var(--text-primary);">${data.name}</h3>
+                            <p class="text-secondary" style="margin:0;"><i class="fa-solid fa-envelope"></i> ${data.email}</p>
+                            <p class="text-secondary" style="margin:0;"><i class="fa-solid fa-graduation-cap"></i> ${data.branch || 'N/A'} - Year ${data.year || 'N/A'}</p>
+                        </div>
+                        
+                        <div style="margin-bottom:15px;">
+                            <strong style="color:var(--text-dim);">Skills</strong><br>
+                            <div class="tags-container" style="margin-top:8px;">
+                                ${(data.skill && data.skill.length > 0) ? data.skill.map(s => `<span class="tag skill-tag">${s}</span>`).join('') : '<span class="text-secondary">None</span>'}
+                            </div>
+                        </div>
+                        <div style="margin-bottom:15px;">
+                            <strong style="color:var(--text-dim);">Interests</strong><br>
+                            <div class="tags-container" style="margin-top:8px;">
+                                ${(data.intrest && data.intrest.length > 0) ? data.intrest.map(s => `<span class="tag">${s}</span>`).join('') : '<span class="text-secondary">None</span>'}
+                            </div>
+                        </div>
+                        <div style="margin-top:20px; padding-top:15px; border-top:1px solid var(--border-color);">
+                            <strong style="color:var(--text-dim); display:block; margin-bottom:10px;">Social Links</strong>
+                            <div style="display:flex; align-items:center;">
+                                ${linksHtml}
+                            </div>
+                        </div>
+                    `;
+                })
+                .catch(e => {
+                    content.innerHTML = '<p style="color:red;">Failed to load profile.</p>';
+                });
+        }
+    </script>
+</body>
+
+</html>

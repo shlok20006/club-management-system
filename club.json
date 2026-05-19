@@ -1,0 +1,121 @@
+{
+    "#C001": {
+        "name": "Aerospace Club ",
+        "category": "Tech",
+        "manager_email": "25ad1ad01@mitsgwl.ac.in",
+        "status": "active",
+        "pending_members": [],
+        "faculty_advisor": {
+            "name": "Dr. Neeraj Mishra",
+            "email": "neeraj001@mitsgwl.ac.in",
+            "department": "Aerospace",
+            "temporary_token": "FFNbQBfRa_bqSc3PIyKl3NGzC3mWcHbsyWn1mroLwx4"
+        },
+        "logo": "Gemini_Generated_Image_nk44hnk44hnk44hn.png",
+        "achievements": [
+            {
+                "title": "biggest event of the year 2025",
+                "description": "club won a prize by mits for biggest event of the year 2025",
+                "icon": "fa-trophy"
+            }
+        ]
+    },
+    "#C002": {
+        "name": "Music Club of MITS",
+        "category": "Cultural",
+        "manager_email": "25ad1ad03@mitsgwl.ac.in",
+        "status": "active",
+        "pending_members": [],
+        "faculty_advisor": {
+            "name": "Dr. Divya Chaturvedi",
+            "email": "divya002@mitsgwl.ac.in",
+            "department": "CSE",
+            "temporary_token": "6yVy2unPFPZG1XkVh5xhmvTmrM4TvsjEHMoE_Wo3l28"
+        },
+        "logo": "bandish.png"
+    },
+    "#C003": {
+        "name": "Fitness Club",
+        "category": "Sports",
+        "manager_email": "25ad1ad02@mitsgwl.ac.in",
+        "status": "active",
+        "pending_members": [],
+        "faculty_advisor": {
+            "name": "Prof. R.P. Kori",
+            "email": "kori003@mitsgwl.ac.in",
+            "department": "ECE",
+            "temporary_token": ""
+        },
+        "logo": "fitness.png"
+    },
+    "#C004": {
+        "name": "Google Developer Student Club (GDSC) ",
+        "category": "Tech",
+        "manager_email": "25ad1ad04@mitsgwl.ac.in",
+        "status": "active",
+        "pending_members": [],
+        "faculty_advisor": {
+            "name": "Dr R S Jadon",
+            "email": "jadon004@mitsgwl.ac.in",
+            "department": "AI",
+            "temporary_token": ""
+        },
+        "logo": "ggg.png"
+    },
+    "#C005": {
+        "name": "Disaster Management Awareness Club ",
+        "category": "Management",
+        "manager_email": "25ad1ad05@mitsgwl.ac.in",
+        "status": "active",
+        "pending_members": [],
+        "faculty_advisor": {
+            "name": "Dr. Jyoti Vimal",
+            "email": "jyoti005@mitsgwl.ac.in",
+            "department": "Civil",
+            "temporary_token": ""
+        },
+        "logo": "dias.png"
+    },
+    "#C006": {
+        "name": "Nutrition Ninja Club",
+        "category": "Cultural",
+        "manager_email": "25ad1ad10@mitsgwl.ac.in",
+        "status": "active",
+        "pending_members": [],
+        "faculty_advisor": {
+            "name": "Dr. Anjula Gaur",
+            "email": "anjula006@mitsgwl.ac.in",
+            "department": "Civil",
+            "temporary_token": ""
+        },
+        "logo": "nnc.png"
+    },
+    "#C007": {
+        "name": "Sports Club ",
+        "category": "Sports",
+        "manager_email": "25ad1ad11@mitsgwl.ac.in",
+        "status": "active",
+        "pending_members": [],
+        "faculty_advisor": {
+            "name": "Dr. B.P.S. Bhadauria",
+            "email": "bp007@mitsgwl.ac.in",
+            "department": "Mechanical",
+            "temporary_token": ""
+        },
+        "logo": "spo.png"
+    },
+    "#C008": {
+        "name": "Mathematics Club ",
+        "category": "Management",
+        "manager_email": "25ad1ad12@mitsgwl.ac.in",
+        "status": "active",
+        "pending_members": [],
+        "faculty_advisor": {
+            "name": "Dr. Vijay Shankar Sharma",
+            "email": "vijay008@mitsgwl.ac.in",
+            "department": "AI",
+            "temporary_token": ""
+        },
+        "logo": "maths.png"
+    }
+}

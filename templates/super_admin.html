@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Dashboard - CampusConnect</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Main Style -->
+    <link rel="stylesheet" href="{{url_for('static',filename='super_admin.css')}}">
+    <script src="{{ url_for('static', filename='super_admin.js', dummy=1) }}"></script>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fa-solid fa-graduation-cap"></i> <span>CampusConnect</span></h2>
+        </div>
+        
+        <ul class="nav-links">
+            <li class="nav-item">
+                <a href="#dashboard" class="nav-link active" data-target="dashboard" data-title="Super Admin Portal">
+                    <i class="fa-solid fa-table-columns"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#manage-clubs" class="nav-link" data-target="manage-clubs" data-title="Manage Clubs">
+                    <i class="fa-solid fa-users-rectangle"></i>
+                    <span>Manage Clubs</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#manage-users" class="nav-link" data-target="manage-users" data-title="Manage Users">
+                    <i class="fa-solid fa-user-group"></i>
+                    <span>Manage Users</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="logout-container">
+            <a href="/logout" class="logout-btn">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+        <!-- Header -->
+        <header class="top-header">
+            <h1 id="page-title">Super Admin Portal</h1>
+            <div class="profile-area">
+                <div class="avatar">SA</div>
+                <div class="profile-info">
+                    <span class="name">Super Admin</span>
+                    <span class="role">System Administrator</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- DASHBOARD SECTION -->
+        <div id="dashboard" class="content-section active">
+            <!-- Quick Stats -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon clubs">
+                        <i class="fa-solid fa-cubes"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>{{total_club}}</h3>
+                        <p>Total Clubs</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon students">
+                        <i class="fa-solid fa-user-graduate"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>{{total_stu}}</h3>
+                        <p>Total Students</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon managers">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>{{total_mana}}</h3>
+                        <p>Active Managers</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Main Dashboard Content -->
+            <div class="dashboard-grid two-col">
+                <!-- Register Form -->
+                <div class="glass-card">
+                    <h2 class="card-title"><i class="fa-solid fa-plus-circle"></i> Register New Club</h2>
+                    <form action="/admin/creat_club" method="POST"   id="addClubForm">
+                        <div class="form-group">
+                            <label for="clubName">Club Name</label>
+                            <input type="text" id="clubName" name="club_name" class="form-control" placeholder="e.g. Coding Club" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="clubCategory">Category</label>
+                            <select id="clubCategory" name="clubcategory" class="form-control" required>
+                                <option value="" disabled selected>Select Category</option>
+                                <option value="Tech">Tech</option>
+                                <option value="Cultural">Cultural</option>
+                                <option value="Sports">Sports</option>
+                                <option value="Management">Management</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="managerEmail">Assign Manager Email</label>
+                            <input type="email" name="email" id="managerEmail" class="form-control" placeholder="student@mitsgwl.ac.in" required>
+                        </div>
+
+                        <div class="advisor-section" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed var(--border);">
+                            <h3 style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--accent-light);"><i class="fa-solid fa-user-tie"></i> Faculty Advisor (Access Control)</h3>
+                            <div class="form-group">
+                                <label>Advisor Name</label>
+                                <input type="text" name="advisor_name" class="form-control" placeholder="Prof. Name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Advisor Email</label>
+                                <input type="email" name="advisor_email" class="form-control" placeholder="advisor@mitsgwl.ac.in" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Department</label>
+                                <input type="text" name="advisor_department" class="form-control" placeholder="e.g. CSE" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary">
+                            <i class="fa-solid fa-check"></i> Create Club & Assign Manager
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Recent Activity Table -->
+                <div class="glass-card">
+                    <h2 class="card-title"><i class="fa-solid fa-list-check"></i> Recent Clubs & Managers</h2>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Club Name</th>
+                                    <th>Category</th>
+                                    <th>Manager Email</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for club_id, club_info in clubs.items()|list|reverse %}
+                                {% if loop.index <= 5 %}
+                                <tr>
+                                    <td class="club-name">{{ club_info.name }}</td>
+                                    <td><span class="category-badge {{ club_info.category|lower }}">{{ club_info.category }}</span></td>
+                                    <td>{{ club_info.manager_email }}</td>
+                                    <td>
+                                        <form action="/admin/delete_club" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to permanently delete this club?');">
+                                            <input type="hidden" name="club_id" value="{{ club_id }}">
+                                            <button type="submit" class="btn-action btn-revoke">
+                                                <i class="fa-solid fa-ban"></i> Revoke
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MANAGE CLUBS SECTION -->
+        <div id="manage-clubs" class="content-section">
+            <div class="dashboard-grid">
+                <div class="glass-card">
+                    <div class="card-header-flex">
+                        <h2 class="card-title"><i class="fa-solid fa-building-user"></i> All Registered Clubs</h2>
+                        <button class="btn-primary auto-width">
+                            <i class="fa-solid fa-plus"></i> Add New Club
+                        </button>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Club ID</th>
+                                    <th>Club Name</th>
+                                    <th>Category</th>
+                                    <th>Assigned Manager</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for club_id, club_info in clubs.items() %}
+                                <tr>
+                                    <td>{{ club_id }}</td>
+                                    <td class="club-name">{{ club_info.name }}</td>
+                                    <td><span class="category-badge {{ club_info.category|lower }}">{{ club_info.category }}</span></td>
+                                    <td>{{ club_info.manager_email }}</td>
+                                    <td>
+                                        {% if club_info.status == 'active' %}
+                                        <span class="category-badge success">Active</span>
+                                        {% else %}
+                                        <span class="category-badge warning">{{ club_info.status|title }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button class="btn-action btn-edit" 
+                                            data-id="{{ club_id }}"
+                                            data-name="{{ club_info.name }}"
+                                            data-category="{{ club_info.category }}"
+                                            data-manager="{{ club_info.manager_email }}"
+                                            data-adv-name="{{ club_info.faculty_advisor.name if club_info.faculty_advisor else '' }}"
+                                            data-adv-email="{{ club_info.faculty_advisor.email if club_info.faculty_advisor else '' }}"
+                                            data-adv-dept="{{ club_info.faculty_advisor.department if club_info.faculty_advisor else '' }}"
+                                            onclick="openEditClubModalFromBtn(this)">
+                                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                                        </button>
+                                        <form action="/admin/delete_club" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to permanently delete this club?');">
+                                            <input type="hidden" name="club_id" value="{{ club_id }}">
+                                            <button type="submit" class="btn-action btn-revoke">
+                                                <i class="fa-solid fa-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MANAGE USERS SECTION -->
+        <div id="manage-users" class="content-section">
+            <div class="dashboard-grid">
+                <div class="glass-card">
+                    <div class="card-header-flex">
+                        <h2 class="card-title"><i class="fa-solid fa-users"></i> Platform Users</h2>
+                        <button class="btn-primary auto-width">
+                            <i class="fa-solid fa-user-plus"></i> Add New User
+                        </button>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Joined Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for email, user_info in users.items() %}
+                                <tr>
+                                    <td class="club-name">{{ user_info.name }}</td>
+                                    <td>{{ email }}</td>
+                                    <td>
+                                        <form action="/admin/change_role" method="POST" style="display:flex;align-items:center;margin:0;">
+                                            <input type="hidden" name="email" value="{{ email }}">
+                                            <select name="new_role" class="form-control" style="padding:4px; font-size:0.85rem; height:auto; width:auto; border-radius:4px;" onchange="this.form.submit()">
+                                                <option value="student" {% if user_info.role == 'student' %}selected{% endif %}>Student</option>
+                                                <option value="manager" {% if user_info.role == 'manager' %}selected{% endif %}>Manager</option>
+                                                <option value="admin" {% if user_info.role == 'admin' %}selected{% endif %}>Admin</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                    <td>{{ user_info.created_at if user_info.created_at else 'N/A' }}</td>
+                                    <td>
+                                        <button class="btn-action btn-edit" onclick="openEditUserModal('{{ email }}', '{{ user_info.name }}', '{{ user_info.branch }}')" style="margin-right:0.5rem;" title="Edit User">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <form action="/admin/delete_user" method="POST" style="display:inline;" onsubmit="return confirm('WARNING: Are you sure you want to permanently delete this user?');">
+                                            <input type="hidden" name="email" value="{{ email }}">
+                                            <button type="submit" class="btn-action btn-revoke" title="Delete User">
+                                                <i class="fa-solid fa-ban"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modals -->
+    <!-- Edit Club Modal -->
+    <div id="editClubModal" class="modal hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; display:flex; align-items:center; justify-content:center;">
+        <div class="modal-content glass-card" style="background:var(--bg-surface); padding:2rem; border-radius:12px; max-width:500px; width:90%; position:relative;">
+            <span class="close-modal" onclick="document.getElementById('editClubModal').classList.add('hidden')" style="position:absolute; right:1.5rem; top:1.5rem; cursor:pointer; font-size:1.5rem;">&times;</span>
+            <h2 class="card-title" style="margin-bottom:1.5rem;">Edit Club</h2>
+            <form action="/admin/edit_club" method="POST">
+                <input type="hidden" id="editClubId" name="club_id">
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label>Club Name</label>
+                    <input type="text" id="editClubName" name="club_name" class="form-control" required style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-primary);">
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label>Category</label>
+                    <select id="editClubCategory" name="category" class="form-control" required style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-primary);">
+                        <option value="Tech">Tech</option>
+                        <option value="Cultural">Cultural</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Management">Management</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Manager Email</label>
+                    <input type="email" id="editClubManager" name="manager_email" class="form-control" required style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-primary);">
+                </div>
+
+                <div class="advisor-edit-section" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border);">
+                    <h3 style="font-size: 0.9rem; margin-bottom: 0.8rem; color: var(--accent-light);">Faculty Advisor</h3>
+                    <div class="form-group" style="margin-bottom:0.8rem;">
+                        <label>Advisor Name</label>
+                        <input type="text" id="editAdvisorName" name="advisor_name" class="form-control" style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-primary);">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0.8rem;">
+                        <label>Advisor Email</label>
+                        <input type="email" id="editAdvisorEmail" name="advisor_email" class="form-control" style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-primary);">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0.8rem;">
+                        <label>Department</label>
+                        <input type="text" id="editAdvisorDept" name="advisor_department" class="form-control" style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-primary);">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%; padding:0.75rem;"><i class="fa-solid fa-save"></i> Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editUserModal" class="modal hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; display:flex; align-items:center; justify-content:center;">
+        <div class="modal-content glass-card" style="background:var(--bg-surface); padding:2rem; border-radius:12px; max-width:500px; width:90%; position:relative;">
+            <span class="close-modal" onclick="document.getElementById('editUserModal').classList.add('hidden')" style="position:absolute; right:1.5rem; top:1.5rem; cursor:pointer; font-size:1.5rem;">&times;</span>
+            <h2 class="card-title" style="margin-bottom:1.5rem;">Edit User</h2>
+            <form action="/admin/edit_user" method="POST">
+                <input type="hidden" id="editUserEmail" name="email">
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label>Name</label>
+                    <input type="text" id="editUserName" name="name" class="form-control" required style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-primary);">
+                </div>
+                <div class="form-group" style="margin-bottom:1.5rem;">
+                    <label>Branch</label>
+                    <input type="text" id="editUserBranch" name="branch" class="form-control" required style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-primary);">
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%; padding:0.75rem;"><i class="fa-solid fa-save"></i> Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openEditClubModalFromBtn(btn) {
+            document.getElementById('editClubId').value = btn.getAttribute('data-id') || '';
+            document.getElementById('editClubName').value = btn.getAttribute('data-name') || '';
+            document.getElementById('editClubCategory').value = btn.getAttribute('data-category') || '';
+            document.getElementById('editClubManager').value = btn.getAttribute('data-manager') || '';
+            document.getElementById('editAdvisorName').value = btn.getAttribute('data-adv-name') || '';
+            document.getElementById('editAdvisorEmail').value = btn.getAttribute('data-adv-email') || '';
+            document.getElementById('editAdvisorDept').value = btn.getAttribute('data-adv-dept') || '';
+            document.getElementById('editClubModal').classList.remove('hidden');
+        }
+        function openEditClubModal(id, name, cat, manager, advName, advEmail, advDept) {
+            document.getElementById('editClubId').value = id;
+            document.getElementById('editClubName').value = name;
+            document.getElementById('editClubCategory').value = cat;
+            document.getElementById('editClubManager').value = manager;
+            // Pre-populate advisor fields
+            document.getElementById('editAdvisorName').value = advName || '';
+            document.getElementById('editAdvisorEmail').value = advEmail || '';
+            document.getElementById('editAdvisorDept').value = advDept || '';
+            document.getElementById('editClubModal').classList.remove('hidden');
+        }
+        function openEditUserModal(email, name, branch) {
+            document.getElementById('editUserEmail').value = email;
+            document.getElementById('editUserName').value = name;
+            document.getElementById('editUserBranch').value = branch;
+            document.getElementById('editUserModal').classList.remove('hidden');
+        }
+    </script>
+    <style>
+        .hidden { display: none !important; }
+    </style>
+</body>
+</html>

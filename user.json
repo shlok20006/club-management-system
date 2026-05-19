@@ -1,0 +1,204 @@
+{
+    "25ad1ad08@mitsgwl.ac.in": {
+        "name": "Aditya Prajapati ",
+        "col_id": "BTAD25O1008",
+        "password": "aditya842007",
+        "skill": [
+            "python",
+            "flask",
+            "numpy"
+        ],
+        "intrest": [
+            "Technology",
+            "Cultural",
+            "Management",
+            "Entrepreneurship"
+        ],
+        "branch": "Ai & Data Science",
+        "year": "1st Year",
+        "role": "admin"
+    },
+    "25ad1ad01@mitsgwl.ac.in": {
+        "name": "shlok ",
+        "col_id": "BTAD25O101",
+        "password": "123",
+        "skill": [
+            "python",
+            "numpy"
+        ],
+        "intrest": [
+            "Technology",
+            "Cultural",
+            "Design"
+        ],
+        "branch": "Ai & Data Science",
+        "year": "1st Year",
+        "role": "manager"
+    },
+    "25ad1ad02@mitsgwl.ac.in": {
+        "name": "rajkumar",
+        "col_id": "BTAD25O102",
+        "password": "1234",
+        "skill": [
+            "c++",
+            "python"
+        ],
+        "intrest": [
+            "Technology",
+            "Sports",
+            "Design"
+        ],
+        "branch": "CE",
+        "year": "1st Year",
+        "role": "manager",
+        "enrolled_clubs": [],
+        "github": "https://github.com/AdityaPrajapati74",
+        "linkedin": "https://www.linkedin.com/home?originalSubdomain=in",
+        "instagram": "https://www.instagram.com/reel/DXB7MMtkSiY/?igsh=MWw4YmR6OWFkZzVrMQ==",
+        "enrolled_events": []
+    },
+    "25ad1ad03@mitsgwl.ac.in": {
+        "name": "sidhant",
+        "col_id": "BTAD25O103",
+        "password": "12345",
+        "skill": [
+            "excel",
+            "MSoffice"
+        ],
+        "intrest": [
+            "Management",
+            "Entrepreneurship"
+        ],
+        "branch": "CSE",
+        "year": "1st Year",
+        "role": "manager"
+    },
+    "25ad1ad04@mitsgwl.ac.in": {
+        "name": "Aryan",
+        "col_id": "BTAD25O104",
+        "password": "123456",
+        "skill": [
+            "c++",
+            "python",
+            "numpy"
+        ],
+        "intrest": [
+            "Technology",
+            "Management"
+        ],
+        "branch": "AiML",
+        "year": "1st Year",
+        "role": "manager",
+        "enrolled_clubs": []
+    },
+    "25ad1ad05@mitsgwl.ac.in": {
+        "name": "khusal",
+        "col_id": "BTAD25O105",
+        "password": "6969",
+        "skill": [
+            "sleeping",
+            "sleeping alot"
+        ],
+        "intrest": [
+            "Cultural",
+            "Design"
+        ],
+        "branch": "ME",
+        "year": "1st Year",
+        "role": "manager"
+    },
+    "25ad1ad10@mitsgwl.ac.in": {
+        "name": "Leo",
+        "col_id": "BTAD25O1007",
+        "password": "012",
+        "skill": [
+            "public speaking"
+        ],
+        "intrest": [
+            "Sports",
+            "Management",
+            "Design"
+        ],
+        "branch": "AiML",
+        "year": "2nd Year",
+        "role": "manager",
+        "created_at": "2026-04-15 12:00:47"
+    },
+    "25ad1ad11@mitsgwl.ac.in": {
+        "name": "Doremon",
+        "col_id": "BTAD25O1011",
+        "password": "0123",
+        "skill": [
+            "public speaking",
+            "mysql"
+        ],
+        "intrest": [
+            "Technology",
+            "Sports",
+            "Management"
+        ],
+        "branch": "IT",
+        "year": "3rd Year",
+        "role": "manager",
+        "created_at": "2026-04-15 12:01:53"
+    },
+    "25ad1ad12@mitsgwl.ac.in": {
+        "name": "omni",
+        "col_id": "BTAD25O1012",
+        "password": "01234",
+        "skill": [
+            "mysql"
+        ],
+        "intrest": [
+            "Technology",
+            "Sports",
+            "Management"
+        ],
+        "branch": "ME",
+        "year": "3rd Year",
+        "role": "manager",
+        "created_at": "2026-04-15 12:02:36"
+    },
+    "25ad1ad13@mitsgwl.ac.in": {
+        "name": "kafka",
+        "col_id": "BTAD25O1013",
+        "password": "123456",
+        "skill": [
+            "figma"
+        ],
+        "intrest": [
+            "Technology",
+            "Sports",
+            "Management"
+        ],
+        "branch": "IT",
+        "year": "4th Year",
+        "role": "student",
+        "created_at": "2026-04-15 12:04:00",
+        "enrolled_events": [
+            "#E001"
+        ]
+    },
+    "bhagat@mitsgwl.ac.in": {
+        "name": "bhagat singh",
+        "col_id": "BTAD25O1020",
+        "password": "000",
+        "skill": [
+            "freedom fighter"
+        ],
+        "intrest": [
+            "Management"
+        ],
+        "branch": "IT",
+        "year": "2nd Year",
+        "role": "student",
+        "created_at": "2026-04-15 13:43:45",
+        "github": "https://github.com/AdityaPrajapati74",
+        "linkedin": "https://www.linkedin.com/home?originalSubdomain=in",
+        "instagram": "",
+        "enrolled_events": [
+            "#E002",
+            "#E001"
+        ]
+    }
+}
