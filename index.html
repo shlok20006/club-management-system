@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | CampusConnect</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{url_for('static',filename='style.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='student.css')}}">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <i class="fa-solid fa-graduation-cap"></i> CampusConnect
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-target="new-events">
+                    <i class="fa-regular fa-calendar-plus"></i> New Events
+                </button>
+                <button class="nav-item" data-target="for-you">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> For You
+                </button>
+                <button class="nav-item" data-target="your-clubs">
+                    <i class="fa-solid fa-users"></i> Your Clubs
+                </button>
+                <button class="nav-item" data-target="profile">
+                    <i class="fa-regular fa-user"></i> Profile
+                </button>
+                <div class="sidebar-spacer" style="flex-grow: 1;"></div>
+                <a href="{{ url_for('logout') }}" class="nav-item text-danger"
+                    style="text-decoration:none;display:flex;align-items:center;gap:0.5rem;">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Workspace Wrapper -->
+        <div class="main-wrapper">
+            <!-- Header Section -->
+            <header class="top-header">
+                <div class="header-search">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Search events, clubs, or categories...">
+                </div>
+                <div class="header-user">
+                    <span class="welcome-msg">Welcome, <strong>{{student.name}}</strong></span>
+                    <!-- Dark / Light theme toggle -->
+                    <button id="theme-toggle" title="Toggle dark/light theme" aria-label="Toggle theme">
+                        <i class="fa-solid fa-moon" id="theme-icon"></i>
+                    </button>
+                    <div class="profile-icon">
+                        <img src="{{url_for('static',filename='assets/profile_avatar.png')}}" alt="Profile"
+                            id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <style>
+                /* ===================================================================
+                   CampusConnect — Deep Space Dark Theme  [data-theme="dark"]
+                   College Club Vibe: electric blue, purple, no white tones
+                   =================================================================== */
+                [data-theme="dark"] {
+                    --bg-main:           #080c18;
+                    --bg-surface:        #0e1525;
+                    --bg-surface-hover:  #141e35;
+                    --surface-low:       #0e1525;
+                    --surface-high:      #1a2640;
+                    --text-primary:      #e4ebff;
+                    --text-secondary:    #7e99d0;
+                    --text-tertiary:     #4d6599;
+                    --text-dim:          #2d4070;
+                    --border-color:      rgba(61, 111, 255, 0.16);
+                    --border-mid:        rgba(61, 111, 255, 0.28);
+                    --primary-light:     rgba(61, 111, 255, 0.12);
+                    --primary-container: rgba(61, 111, 255, 0.18);
+                    --tertiary-container: rgba(251, 191, 36, 0.12);
+                    --shadow-sm:   0 1px 6px rgba(0,0,0,0.5);
+                    --shadow-md:   0 4px 20px rgba(0,0,0,0.55);
+                    --shadow-hover:0 20px 50px rgba(61,111,255,0.25);
+                }
+            </style>
+
+            <!-- Main Content Area -->
+            <main class="content-area">
+
+                <!-- Section 1: New Events -->
+                <section id="new-events" class="content-section active">
+                    <div class="section-header">
+                        <h2>New Events</h2>
+                        <p>Discover the latest happenings on campus.</p>
+                    </div>
+
+                    <div class="filter-chips">
+                        <button class="filter-chip active" data-filter="All">All</button>
+                        <button class="filter-chip" data-filter="Tech">Tech</button>
+                        <button class="filter-chip" data-filter="Cultural">Cultural</button>
+                        <button class="filter-chip" data-filter="Sports">Sports</button>
+                        <button class="filter-chip" data-filter="Workshop">Workshop</button>
+                        <button class="filter-chip" data-filter="Recruitment">Recruitment</button>
+                    </div>
+
+                    <div class="card-grid" id="events-grid">
+                        {% if events %}
+                        {% for event_id, event in events.items() %}
+                        <div class="card event-card" id="event-card-{{ event_id }}" data-category="{{ event.category }}"
+                            onclick="window.location.href='/event/{{ event_id|urlencode }}'" style="cursor:pointer;">
+                            <div class="card-image-wrapper">
+                                <img src="{{ url_for('static', filename='uploads/events/' + event.thumbnail) if event.thumbnail else url_for('static',filename='assets/hackathon_banner.png') }}"
+                                    alt="{{ event.title }}" class="card-image">
+                                <span class="badge badge-tech">{{ event.category }}</span>
+                            </div>
+                            <div class="card-body">
+                                <h3>{{ event.title }}</h3>
+                                <div class="card-meta">
+                                    <span><i class="fa-solid fa-users"></i> {{ clubs[event.club_id].name if
+                                        event.club_id in clubs else 'Host Club' }}</span>
+                                    <span><i class="fa-regular fa-calendar"></i> {{ event.date }}</span>
+                                </div>
+                                <p class="card-desc">{{ event.description }}</p>
+                                {% if event_id in student.get('enrolled_events', []) %}
+                                <div style="display:flex;gap:0.5rem;">
+                                    <button class="btn btn-success btn-large btn-bottom register-btn"
+                                        data-event-id="{{ event_id }}" data-form-link="{{ event.google_form_link }}"
+                                        onclick="event.stopPropagation();"><i class="fa-solid fa-check"></i>
+                                        Registered</button>
+                                    <button class="btn btn-primary btn-large btn-bottom event-chat-btn"
+                                        data-event-id="{{ event_id }}" data-event-name="{{ event.title }}"><i
+                                            class="fa-solid fa-comments"></i></button>
+                                </div>
+                                {% elif student_email in event.get('pending_participants', []) %}
+                                <button class="btn btn-secondary btn-large btn-bottom register-btn"
+                                    data-event-id="{{ event_id }}" data-form-link="{{ event.google_form_link }}"
+                                    onclick="event.stopPropagation();"><i class="fa-solid fa-clock"></i>
+                                    Requested</button>
+                                {% else %}
+                                <button class="btn btn-primary btn-large btn-bottom register-btn"
+                                    data-event-id="{{ event_id }}" data-form-link="{{ event.google_form_link }}"
+                                    onclick="event.stopPropagation();">Register Now</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <p class="text-secondary">No new events available at the moment.</p>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <!-- Section 2: For You -->
+                <section id="for-you" class="content-section">
+                    <div class="section-header">
+                        <span class="section-meta-label"><i class="fa-solid fa-wand-magic-sparkles"></i> &nbsp;Curated</span>
+                        <h2>Recommended For You</h2>
+                        <p>Events and clubs matched to your interests.</p>
+                    </div>
+
+                    {# Build a smart keyword map for interest matching #}
+                    {# e.g. "Tech" interest → matches clubs/events with category containing tech/technology/coding #}
+                    {% set interest_keywords = [] %}
+                    {% for i in student.intrest %}
+                        {% set kw = i.lower() %}
+                        {% if interest_keywords.append(kw) %}{% endif %}
+                        {# expand aliases #}
+                        {% if kw in ['tech', 'technology', 'coding', 'programming'] %}
+                            {% if interest_keywords.append('tech') %}{% endif %}
+                            {% if interest_keywords.append('technology') %}{% endif %}
+                        {% elif kw in ['cultural', 'culture', 'arts', 'dance', 'music'] %}
+                            {% if interest_keywords.append('cultural') %}{% endif %}
+                        {% elif kw in ['sports', 'fitness', 'athletic'] %}
+                            {% if interest_keywords.append('sports') %}{% endif %}
+                        {% elif kw in ['management', 'business', 'leadership'] %}
+                            {% if interest_keywords.append('management') %}{% endif %}
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- Recommended Events -->
+                    <div class="card-grid">
+                        {% set ns = namespace(found=false) %}
+                        {% for event_id, event in events.items() %}
+                            {% set cat = event.category.lower() %}
+                            {% if cat in interest_keywords or
+                               (cat == 'tech' and 'technology' in interest_keywords) or
+                               (cat == 'technology' and 'tech' in interest_keywords) %}
+                            {% set ns.found = true %}
+                            <div class="card event-card recommended-card" id="recommended-card-{{ event_id }}"
+                                data-category="{{ event.category }}"
+                                onclick="window.location.href='/event/{{ event_id|urlencode }}'" style="cursor:pointer;">
+                                <div class="card-image-wrapper">
+                                    <img src="{{ url_for('static', filename='uploads/events/' + event.thumbnail) if event.thumbnail else url_for('static',filename='assets/hackathon_banner.png') }}"
+                                        alt="{{ event.title }}" class="card-image">
+                                    <span class="badge badge-{{ event.category.lower() }}">{{ event.category }}</span>
+                                </div>
+                                <div class="card-body">
+                                    <h3>{{ event.title }}</h3>
+                                    <div class="card-meta">
+                                        <span><i class="fa-solid fa-users"></i> {{ clubs[event.club_id].name if event.club_id in clubs else 'Host Club' }}</span>
+                                        <span><i class="fa-regular fa-calendar"></i> {{ event.date.replace('T', ' ') if event.date else 'TBD' }}</span>
+                                    </div>
+                                    <p class="card-desc">{{ event.description }}</p>
+                                    <button class="btn btn-secondary view-detail-btn"
+                                        onclick="event.stopPropagation(); openDetailsModal(this.dataset.title, this.dataset.date, this.dataset.desc, this.dataset.cat)"
+                                        data-title="{{ event.title | e }}"
+                                        data-date="{{ event.date.replace('T', ' ') if event.date else 'TBD' }}"
+                                        data-desc="{{ event.description | e }}" data-cat="{{ event.category | e }}">View Details</button>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not ns.found %}
+                        <p class="text-secondary">No recommended events matching your interests right now.</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Clubs For You -->
+                    <div class="section-header" style="margin-top:2.5rem;">
+                        <span class="section-meta-label"><i class="fa-solid fa-building-columns"></i> &nbsp;Clubs</span>
+                        <h2>Clubs For You</h2>
+                        <p>Clubs that match your interests.</p>
+                    </div>
+                    <div class="card-grid">
+                        {% set cs = namespace(found=false) %}
+                        {% for cid, c in clubs.items() %}
+                            {% set cat = c.category.lower() %}
+                            {% if cat in interest_keywords or
+                               (cat == 'tech' and 'technology' in interest_keywords) or
+                               (cat == 'technology' and 'tech' in interest_keywords) %}
+                            {% set cs.found = true %}
+                            {# Gather club members count #}
+                            {% set mem_count = namespace(n=0) %}
+                            <div class="card event-card" style="cursor:pointer;"
+                                data-cid="{{ cid }}"
+                                data-name="{{ c.name | e }}"
+                                data-category="{{ c.category | e }}"
+                                data-manager="{{ c.manager_email | e }}"
+                                data-logo="{{ url_for('static', filename='uploads/clubs/' + c.logo) if c.logo else url_for('static', filename='assets/club_logo.png') }}"
+                                data-about="{{ c.about | default('', true) | e }}"
+                                data-insta="{{ c.instagram | default('', true) | e }}"
+                                onclick="event.stopPropagation(); openClubModalFromEl(this)">
+                                <div class="card-image-wrapper">
+                                    <img src="{{ url_for('static', filename='uploads/clubs/' + c.logo) if c.logo else url_for('static', filename='assets/club_logo.png') }}"
+                                        alt="{{ c.name }}" class="card-image"
+                                        onerror="this.src=`{{ url_for('static', filename='assets/club_logo.png') }}`">
+                                    <span class="badge badge-{{ c.category.lower() }}">{{ c.category }}</span>
+                                </div>
+                                <div class="card-body">
+                                    <h3>{{ c.name }}</h3>
+                                    <div class="card-meta">
+                                        <span><i class="fa-solid fa-user-tie"></i> {{ c.manager_email.split('@')[0] }}</span>
+                                        {% if c.instagram %}
+                                        <span><i class="fa-brands fa-instagram" style="color:#e1306c;"></i> Instagram</span>
+                                        {% endif %}
+                                    </div>
+                                    {% if c.about %}
+                                    <p class="card-desc">{{ c.about }}</p>
+                                    {% endif %}
+                                    <button class="btn btn-primary btn-sm btn-bottom"
+                                        data-cid="{{ cid }}"
+                                        data-name="{{ c.name | e }}"
+                                        data-category="{{ c.category | e }}"
+                                        data-manager="{{ c.manager_email | e }}"
+                                        data-logo="{{ url_for('static', filename='uploads/clubs/' + c.logo) if c.logo else url_for('static', filename='assets/club_logo.png') }}"
+                                        data-about="{{ c.about | default('', true) | e }}"
+                                        data-insta="{{ c.instagram | default('', true) | e }}"
+                                        onclick="event.stopPropagation(); openClubModalFromEl(this)">View Profile</button>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not cs.found %}
+                        <p class="text-secondary">No clubs matching your interests yet. Update your interests in Profile to see suggestions!</p>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <!-- Section 3: Your Clubs -->
+                <section id="your-clubs" class="content-section">
+                    <div class="section-header">
+                        <h2>Your Clubs</h2>
+                        <p>Manage and interact with clubs you are a part of.</p>
+                    </div>
+
+                    <!-- Horizontal Scrolling List of 'Your Clubs' -->
+                    <div class="club-horizontal-list mb-4">
+                        {% if my_clubs %}
+                        {% for club_id, club in my_clubs.items() %}
+                        <div class="club-profile-card enrolled-club" data-club-id="{{ club_id }}"
+                            data-club-name="{{ club.name }}">
+                            <img src="{{ url_for('static', filename='uploads/clubs/' + club.logo) if club.logo else url_for('static', filename='assets/club_logo.png') }}"
+                                alt="{{ club.name }} Logo" class="club-logo-small">
+                            <h4>{{ club.name }}</h4>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div style="padding: 2rem; color: #888; font-style: italic;">
+                            You haven't joined any clubs yet. Explore below to join!
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="section-header" style="margin-top: 3rem;">
+                        <h2 style="font-size: 1.5rem;">Explore Clubs</h2>
+                    </div>
+
+                    <!-- Horizontal Scrolling List of 'Explore Clubs' -->
+                    <div class="club-horizontal-list">
+                        {% for club_id, club in clubs.items() %}
+                        {% if club_id not in my_clubs %}
+                        <div class="club-profile-card explore-club" style="cursor: default;">
+                            <img src="{{ url_for('static', filename='uploads/clubs/' + club.logo) if club.logo else url_for('static', filename='assets/club_logo.png') }}"
+                                alt="{{ club.name }} Logo" class="club-logo-small mb-2">
+                            <h4 style="margin-bottom: 0.5rem;">{{ club.name }}</h4>
+                            <span class="badge" style="background:#334155;">{{ club.category }}</span>
+                            {% if student_email in club.get('pending_members', []) %}
+                            <button class="btn btn-secondary btn-sm mt-3" disabled style="width: 100%;"><i
+                                    class="fa-solid fa-clock"></i> Requested</button>
+                            {% else %}
+                            <button class="btn btn-primary btn-sm mt-3 join-club-btn" data-club-id="{{ club_id }}"
+                                style="width: 100%;">Join Club</button>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <!-- Club Chat Interface -->
+                    <div id="demo-chat" class="chat-interface glass-chat hidden">
+                        <div class="chat-header">
+                            <div class="chat-header-info" style="display:flex;align-items:center;">
+                                <h3 style="margin:0;"><img src="{{url_for('static',filename='assets/club_logo.png')}}"
+                                        style="width:24px;border-radius:50%;display:inline-block;vertical-align:middle;margin-right:8px;">
+                                    <span id="chat-club-name">ByteClub</span> <span
+                                        style="font-size:0.85rem;font-weight:normal;margin-left:8px;color:var(--text-secondary);">(<span
+                                            id="chat-member-count">0</span> Members)</span> <span class="online-dot"
+                                        title="Online"></span></h3>
+                            </div>
+                            <button class="close-chat-btn"><i class="fa-solid fa-times"></i></button>
+                        </div>
+                        <div class="chat-history">
+                            <!-- Messages will be loaded dynamically -->
+                        </div>
+                        <div class="chat-input-row">
+                            <input type="text" placeholder="Type a message...">
+                            <button class="btn-send"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 4: Profile -->
+                <section id="profile" class="content-section">
+                    <div class="section-header">
+                        <h2>Your Profile</h2>
+                        <p>Manage your details and skills.</p>
+                    </div>
+
+                    <div class="profile-layout">
+                        <!-- Header Card -->
+                        <div class="card profile-header-card">
+                            <img src="{{url_for('static',filename='assets/profile_avatar.png')}}" alt="Profile Avatar"
+                                class="profile-large-img">
+                            <div class="profile-info-text">
+                                <h2>{{student.name}}</h2>
+                                <p class="sub-text">{{student.branch}} • {{student.year}}</p>
+                                <div class="college-id"><i class="fa-solid fa-id-card"></i> ID:{{student.col_id}}</div>
+                            </div>
+                            <div class="profile-header-actions">
+                                <button class="btn btn-primary"
+                                    onclick="document.getElementById('editProfileModal').classList.remove('hidden')"><i
+                                        class="fa-solid fa-pen"></i> Edit Profile</button>
+                            </div>
+                        </div>
+
+                        <div class="profile-details-grid">
+                            <!-- Interests -->
+                            <div class="card info-card">
+                                <h3><i class="fa-solid fa-star"></i> Interests</h3>
+                                <div class="tags-container">
+                                    {% for s in student.intrest %}
+                                    <span class="tag">{{s}}</span>
+                                    {%endfor%}
+                                </div>
+                            </div>
+
+                            <!-- Skills -->
+                            <div class="card info-card">
+                                <h3><i class="fa-solid fa-code"></i> Skills</h3>
+                                <div class="tags-container">
+                                    {% for i in student.skill %}
+                                    <span class="tag skill-tag">{{i}}</span>
+                                    {%endfor%}
+                                    {% if not student.skill %}
+                                    <span style="color:var(--text-secondary);font-size:0.85rem;">No skills added
+                                        yet.</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- Social Links -->
+                            <div class="card info-card">
+                                <h3><i class="fa-solid fa-link"></i> Social Links</h3>
+                                <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+                                    {% if student.github %}
+                                    <a href="{{ student.github }}" target="_blank" style="color:var(--text-primary); text-decoration:none; display:flex; align-items:center; gap:8px;">
+                                        <i class="fa-brands fa-github" style="font-size:1.2rem;"></i> {{ student.github.split('/')[-1] if student.github.split('/')[-1] else student.github }}
+                                    </a>
+                                    {% else %}
+                                    <span style="color:var(--text-secondary);font-size:0.85rem;"><i class="fa-brands fa-github"></i> Not provided</span>
+                                    {% endif %}
+
+                                    {% if student.linkedin %}
+                                    <a href="{{ student.linkedin }}" target="_blank" style="color:#0a66c2; text-decoration:none; display:flex; align-items:center; gap:8px;">
+                                        <i class="fa-brands fa-linkedin" style="font-size:1.2rem;"></i> LinkedIn Profile
+                                    </a>
+                                    {% else %}
+                                    <span style="color:var(--text-secondary);font-size:0.85rem;"><i class="fa-brands fa-linkedin"></i> Not provided</span>
+                                    {% endif %}
+
+                                    {% if student.instagram %}
+                                    <a href="{{ student.instagram }}" target="_blank" style="color:#e1306c; text-decoration:none; display:flex; align-items:center; gap:8px;">
+                                        <i class="fa-brands fa-instagram" style="font-size:1.2rem;"></i> Instagram
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Enrolled Events -->
+                            <div class="card info-card full-width">
+                                <h3><i class="fa-solid fa-calendar-check"></i> Enrolled Events</h3>
+                                <div class="profile-stats">
+                                    <div class="stat">
+                                        <span class="stat-value">{{ student.get('enrolled_events', []) | length
+                                            }}</span>
+                                        <span class="stat-label">Events</span>
+                                    </div>
+                                    <div class="stat">
+                                        <span class="stat-value">{{ my_clubs | length }}</span>
+                                        <span class="stat-label">Joined Clubs</span>
+                                    </div>
+                                </div>
+                                <div class="enrolled-list">
+                                    {% for eid in student.get('enrolled_events', []) %}
+                                    {% if eid in events %}
+                                    <div class="enrolled-item">
+                                        <div class="enrolled-item-info">
+                                            <strong>{{ events[eid].title }}</strong>
+                                            <span>{{ events[eid].date.replace('T', ' ') if events[eid].date else 'TBD'
+                                                }}</span>
+                                        </div>
+                                        <div style="display:flex;gap:0.5rem;align-items:center;">
+                                            <span class="status-badge registered">Registered</span>
+                                            <button class="btn btn-primary btn-sm event-chat-btn"
+                                                data-event-id="{{ eid }}" data-event-name="{{ events[eid].title }}"
+                                                style="font-size:0.75rem;padding:0.3rem 0.6rem;"><i
+                                                    class="fa-solid fa-comments"></i> Chat</button>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% if student.get('enrolled_events', []) | length == 0 %}
+                                    <p class="text-secondary" style="padding:0.5rem 0;">You haven't registered for any
+                                        events yet.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Event Details Modal -->
+    <div id="eventDetailsModal" class="modal hidden">
+        <div class="modal-content glass-card">
+            <span class="close-modal" onclick="closeDetailsModal()">&times;</span>
+            <h2 id="modalEventTitle" style="color:var(--text-primary); margin-bottom:1rem;">Title</h2>
+            <div class="modal-meta" style="display:flex; gap:1rem; margin-bottom:1rem; align-items:center;">
+                <span class="badge badge-tech" id="modalEventCategory"
+                    style="position:static; margin-top:0;">Category</span>
+                <span id="modalEventDate" style="color:var(--text-secondary);"><i class="fa-regular fa-calendar"></i>
+                    Date</span>
+            </div>
+            <p id="modalEventDesc" class="mt-3" style="color:var(--text-secondary); line-height:1.6;">Description</p>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal hidden">
+        <div class="modal-content glass-card">
+            <span class="close-modal"
+                onclick="document.getElementById('editProfileModal').classList.add('hidden')">&times;</span>
+            <h2 style="color:var(--text-primary); margin-bottom:1.5rem;">Edit Profile</h2>
+            <form action="/student/edit_profile" method="POST">
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="color:var(--text-secondary); display:block; margin-bottom:0.5rem;">Full Name</label>
+                    <input type="text" name="name" class="form-control" value="{{ student.name }}"
+                        style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-primary);"
+                        required>
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="color:var(--text-secondary); display:block; margin-bottom:0.5rem;">Branch /
+                        Major</label>
+                    <input type="text" name="branch" class="form-control" value="{{ student.branch }}"
+                        style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-primary);"
+                        required>
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="color:var(--text-secondary); display:block; margin-bottom:0.5rem;">Skills <small
+                            style="opacity:0.6;">(comma separated)</small></label>
+                    <input type="text" name="skills" class="form-control" value="{{ student.skill|join(', ') }}"
+                        placeholder="Python, Web Dev, Machine Learning"
+                        style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-primary);">
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="color:var(--text-secondary); display:block; margin-bottom:0.5rem;">Interests <small
+                            style="opacity:0.6;">(comma separated)</small></label>
+                    <input type="text" name="interests" class="form-control" value="{{ student.intrest|join(', ') }}"
+                        placeholder="Tech, Cultural, Sports"
+                        style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-primary);">
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="color:var(--text-secondary); display:block; margin-bottom:0.5rem;">GitHub URL <span style="color:#f43f5e;">*</span></label>
+                    <input type="url" name="github" class="form-control" value="{{ student.github if student.github else '' }}"
+                        placeholder="https://github.com/yourusername"
+                        style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-primary);" required>
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="color:var(--text-secondary); display:block; margin-bottom:0.5rem;">LinkedIn URL <span style="color:#f43f5e;">*</span></label>
+                    <input type="url" name="linkedin" class="form-control" value="{{ student.linkedin if student.linkedin else '' }}"
+                        placeholder="https://linkedin.com/in/yourprofile"
+                        style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-primary);" required>
+                </div>
+                <div class="form-group" style="margin-bottom:1.5rem;">
+                    <label style="color:var(--text-secondary); display:block; margin-bottom:0.5rem;">Instagram URL <small style="opacity:0.6;">(optional)</small></label>
+                    <input type="url" name="instagram" class="form-control" value="{{ student.instagram if student.instagram else '' }}"
+                        placeholder="https://instagram.com/yourprofile"
+                        style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-primary);">
+                </div>
+                <button type="submit" class="btn btn-primary w-100" style="width:100%; padding:0.75rem;">Save
+                    Changes</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Club Full Profile Modal -->
+    <div id="clubDetailsModal" class="modal hidden">
+        <div class="modal-content glass-card" style="max-width:560px; padding:0; overflow:hidden; border-radius:20px; border:none;">
+
+            <!-- Modal Hero Header -->
+            <div style="background: linear-gradient(135deg, #1a1f5e 0%, #2d1f7a 60%, #1a1f5e 100%);
+                padding: 26px 26px 20px; position: relative; overflow: hidden;">
+                <!-- bg glow -->
+                <div style="position:absolute;top:-40%;right:-10%;width:200px;height:200px;
+                    background:radial-gradient(circle,rgba(139,92,246,0.25),transparent 70%);pointer-events:none;"></div>
+                <!-- Close btn -->
+                <span class="close-modal"
+                    onclick="document.getElementById('clubDetailsModal').classList.add('hidden')"
+                    style="color:rgba(255,255,255,0.7); top:12px; right:14px;">&times;</span>
+
+                <div style="display:flex; align-items:center; gap:16px; position:relative;">
+                    <img id="modalClubLogo"
+                        src="{{ url_for('static', filename='assets/club_logo.png') }}"
+                        alt="Club Logo"
+                        style="width:66px; height:66px; border-radius:50%; object-fit:cover;
+                               border:3px solid rgba(255,255,255,0.3); box-shadow:0 4px 16px rgba(0,0,0,0.3); flex-shrink:0;"
+                        onerror="this.src=`{{ url_for('static', filename='assets/club_logo.png')}}`">
+                    <div>
+                        <h2 id="modalClubName" style="color:#fff; margin:0 0 5px; font-family:'Manrope',sans-serif; font-size:1.25rem; font-weight:800;">Club Name</h2>
+                        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                            <span id="modalClubCatBadge" class="badge" style="position:static; font-size:0.68rem; background:rgba(255,255,255,0.18); color:#fff; backdrop-filter:blur(6px);">Category</span>
+                            <a id="modalClubInstaAnchor" href="#" target="_blank" rel="noopener"
+                                style="display:none; align-items:center; gap:5px; font-size:0.78rem;
+                                       color:rgba(255,255,255,0.8); text-decoration:none; font-weight:600;">
+                                <i class="fa-brands fa-instagram" style="color:#f4a;"></i> Instagram
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div style="padding: 20px 24px 22px;">
+
+                <!-- About -->
+                <div id="modalClubAboutSection" style="display:none; margin-bottom:16px;">
+                    <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.09em;
+                               color:var(--accent, #3d6fff); margin-bottom:6px;">
+                        <i class="fa-solid fa-circle-info"></i> About
+                    </p>
+                    <p id="modalClubAbout" style="color:var(--text-secondary); font-size:0.87rem; line-height:1.6; margin:0;"></p>
+                </div>
+
+                <!-- Info row -->
+                <div style="display:flex; gap:20px; flex-wrap:wrap; border-top:1px solid var(--border-color); padding-top:14px; margin-bottom:14px;">
+                    <div>
+                        <p style="font-size:0.7rem; color:var(--text-dim); font-weight:700; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:3px;">Manager</p>
+                        <p id="modalClubManager" style="color:var(--text-primary); font-size:0.86rem; font-weight:600;">–</p>
+                    </div>
+                    <div id="modalPresidentBlock" style="display:none;">
+                        <p style="font-size:0.7rem; color:var(--text-dim); font-weight:700; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:3px;"><i class="fa-solid fa-crown" style="color:#d97706;"></i> President</p>
+                        <p id="modalClubPresident" style="color:var(--text-primary); font-size:0.86rem; font-weight:600;">–</p>
+                    </div>
+                </div>
+
+                <!-- Achievements -->
+                <div id="modalAchievementsSection" style="display:none; border-top:1px solid var(--border-color); padding-top:14px; margin-bottom:16px;">
+                    <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.09em;
+                               color:var(--tertiary, #d97706); margin-bottom:10px;">
+                        <i class="fa-solid fa-trophy"></i> Achievements
+                    </p>
+                    <ul id="modalAchievementsList" style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:7px;"></ul>
+                </div>
+
+                <!-- Action buttons -->
+                <div style="display:flex; gap:10px; margin-top:4px; border-top:1px solid var(--border-color); padding-top:16px;">
+                    <button id="modalJoinBtn" class="btn btn-primary" style="flex:1;"
+                        onclick="handleModalJoin()">
+                        <i class="fa-solid fa-user-plus"></i> Join Club
+                    </button>
+                    <button class="btn btn-outline" onclick="document.getElementById('clubDetailsModal').classList.add('hidden')">
+                        <i class="fa-solid fa-xmark"></i> Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <style>
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 42, 68, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.hidden {
+            display: none !important;
+        }
+
+        .modal-content {
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            padding: 2rem;
+            border-radius: 16px;
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-xl, 0 20px 25px -5px rgba(0, 0, 0, 0.1));
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 1.25rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-tertiary);
+            transition: color 0.2s ease;
+            z-index: 10;
+        }
+
+        .close-modal:hover {
+            color: var(--text-primary);
+        }
+
+        /* Event Chat Floating Panel */
+        #event-chat-panel {
+            position: fixed !important;
+            bottom: 2rem;
+            right: 2rem;
+            width: 360px;
+            z-index: 1500;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+        }
+
+        #event-chat-panel.hidden {
+            display: none !important;
+        }
+    </style>
+
+    <!-- Event Chat Floating Window -->
+    <div id="event-chat-panel" class="chat-interface glass-chat hidden" style="bottom:2rem;right:2rem;">
+        <div class="chat-header">
+            <div class="chat-header-info" style="display:flex;align-items:center;">
+                <h3 style="margin:0;"><i class="fa-solid fa-calendar-check"
+                        style="margin-right:8px;color:var(--accent-blue);"></i> <span id="event-chat-event-name">Event
+                        Chat</span> <span class="online-dot" title="Online"></span></h3>
+            </div>
+            <button class="close-chat-btn" id="close-event-chat-btn"><i class="fa-solid fa-times"></i></button>
+        </div>
+        <div class="chat-history" id="event-chat-history-student"></div>
+        <div class="chat-input-row">
+            <input type="text" id="event-chat-input-student" placeholder="Type a message...">
+            <button class="btn-send" id="event-chat-send-student"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+    <script>
+        function openDetailsModal(title, date, desc, cat) {
+            document.getElementById('modalEventTitle').textContent = title;
+            document.getElementById('modalEventDate').innerHTML = '<i class="fa-regular fa-calendar"></i> ' + date;
+            document.getElementById('modalEventDesc').textContent = desc;
+            document.getElementById('modalEventCategory').textContent = cat;
+            document.getElementById('eventDetailsModal').classList.remove('hidden');
+        }
+        function closeDetailsModal() {
+            document.getElementById('eventDetailsModal').classList.add('hidden');
+        }
+
+        // Rich club profile modal
+        let _modalClubId = null;
+
+        function openClubModalFromEl(el) {
+            openClubModal(
+                el.getAttribute('data-cid'),
+                el.getAttribute('data-name'),
+                el.getAttribute('data-category'),
+                el.getAttribute('data-manager'),
+                el.getAttribute('data-logo'),
+                el.getAttribute('data-about'),
+                el.getAttribute('data-insta')
+            );
+        }
+
+        function openClubModal(cid, name, category, manager, logo, about, instagram) {
+            _modalClubId = cid;
+
+            // Hero
+            document.getElementById('modalClubName').textContent = name;
+            document.getElementById('modalClubCatBadge').textContent = category;
+            document.getElementById('modalClubLogo').src = logo || "{{ url_for('static', filename='assets/club_logo.png') }}";
+
+            // Instagram
+            const instaEl = document.getElementById('modalClubInstaAnchor');
+            if (instagram && instagram.trim()) {
+                instaEl.href = instagram;
+                instaEl.style.display = 'inline-flex';
+            } else {
+                instaEl.style.display = 'none';
+            }
+
+            // About
+            const aboutSection = document.getElementById('modalClubAboutSection');
+            if (about && about.trim()) {
+                document.getElementById('modalClubAbout').textContent = about;
+                aboutSection.style.display = 'block';
+            } else {
+                aboutSection.style.display = 'none';
+            }
+
+            // Manager
+            document.getElementById('modalClubManager').textContent = manager;
+
+            // Fetch full club data (achievements + president) from server
+            fetch('/api/club_profile?club_id=' + encodeURIComponent(cid))
+                .then(r => r.json())
+                .then(data => {
+                    // President
+                    const presBlock = document.getElementById('modalPresidentBlock');
+                    if (data.president_name) {
+                        document.getElementById('modalClubPresident').textContent = data.president_name + ' (' + (data.president_email || '') + ')';
+                        presBlock.style.display = 'block';
+                    } else {
+                        presBlock.style.display = 'none';
+                    }
+
+                    // Achievements
+                    const achSection = document.getElementById('modalAchievementsSection');
+                    const achList = document.getElementById('modalAchievementsList');
+                    achList.innerHTML = '';
+                    if (data.achievements && data.achievements.length > 0) {
+                        data.achievements.forEach(a => {
+                            const li = document.createElement('li');
+                            li.style.cssText = 'display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:rgba(212,170,0,0.06);border-radius:8px;border:1px solid rgba(212,170,0,0.15);';
+                            li.innerHTML = `<i class="fa-solid ${a.icon || 'fa-trophy'}" style="color:#d97706;margin-top:2px;flex-shrink:0;"></i>
+                                <div><strong style="color:var(--text-primary);font-size:0.86rem;">${a.title}</strong>
+                                <span style="display:block;color:var(--text-secondary);font-size:0.78rem;">${a.description}</span></div>`;
+                            achList.appendChild(li);
+                        });
+                        achSection.style.display = 'block';
+                    } else {
+                        achSection.style.display = 'none';
+                    }
+
+                    // Join button state
+                    const joinBtn = document.getElementById('modalJoinBtn');
+                    if (data.is_member) {
+                        joinBtn.innerHTML = '<i class="fa-solid fa-check"></i> Already a Member';
+                        joinBtn.disabled = true;
+                        joinBtn.className = 'btn btn-success';
+                    } else if (data.is_pending) {
+                        joinBtn.innerHTML = '<i class="fa-solid fa-clock"></i> Request Pending';
+                        joinBtn.disabled = true;
+                        joinBtn.className = 'btn btn-secondary';
+                    } else {
+                        joinBtn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Join Club';
+                        joinBtn.disabled = false;
+                        joinBtn.className = 'btn btn-primary';
+                        joinBtn.style.flex = '1';
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('modalPresidentBlock').style.display = 'none';
+                    document.getElementById('modalAchievementsSection').style.display = 'none';
+                });
+
+            document.getElementById('clubDetailsModal').classList.remove('hidden');
+        }
+
+        function handleModalJoin() {
+            if (!_modalClubId) return;
+            const btn = document.getElementById('modalJoinBtn');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+            btn.disabled = true;
+            fetch('/api/join_club', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ club_id: _modalClubId })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    btn.innerHTML = '<i class="fa-solid fa-clock"></i> Request Sent!';
+                    btn.className = 'btn btn-secondary';
+                } else {
+                    btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Join Club';
+                    btn.disabled = false;
+                    btn.className = 'btn btn-primary';
+                }
+            })
+            .catch(() => {
+                btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Join Club';
+                btn.disabled = false;
+            });
+        }
+
+        // Back-compat alias (used in Your Clubs section older cards)
+        function openClubDetailsModal(name, category, manager, logo) {
+            openClubModal('', name, category, manager, logo, '', '');
+        }
+    </script>
+
+    <!-- Script for Join Club functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const joinBtns = document.querySelectorAll('.join-club-btn');
+            joinBtns.forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const clubId = btn.dataset.clubId;
+                    btn.disabled = true;
+                    btn.innerText = 'Requesting...';
+                    try {
+                        const res = await fetch('/api/join_club', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ club_id: clubId })
+                        });
+                        const data = await res.json();
+                        if (res.ok && data.status === 'success') {
+                            btn.innerHTML = '<i class="fa-solid fa-clock"></i> Requested';
+                            btn.classList.replace('btn-primary', 'btn-secondary');
+                        } else {
+                            btn.innerText = 'Error';
+                            btn.disabled = false;
+                        }
+                    } catch (e) {
+                        console.error(e);
+                        btn.innerText = 'Error';
+                        btn.disabled = false;
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- ============================================================
+         Dark / Light Theme Toggle — Academic Atelier
+         ============================================================ -->
+    <script>
+        (function() {
+            // Apply saved theme immediately on load (no flash)
+            var saved = localStorage.getItem('campusconnect-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', saved);
+            var icon = document.getElementById('theme-icon');
+            if (icon) {
+                icon.className = saved === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            }
+
+            document.getElementById('theme-toggle').addEventListener('click', function() {
+                var html = document.documentElement;
+                var current = html.getAttribute('data-theme');
+                var next = current === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', next);
+                localStorage.setItem('campusconnect-theme', next);
+                var ic = document.getElementById('theme-icon');
+                if (ic) {
+                    ic.className = next === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+                }
+            });
+        })();
+    </script>
+</body>
+
+</html>

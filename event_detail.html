@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ event.title }} | CampusConnect</title>
+    <meta name="description" content="{{ event.description[:150] if event.description else 'Event details on CampusConnect.' }}">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* === Stitch Academic Atelier Tokens === */
+        :root {
+            --primary:        #001430;
+            --primary-hover:  #002050;
+            --accent:         #388fff;
+            --accent-glow:    rgba(56, 143, 255, 0.18);
+            --amber:          #eac258;
+            --amber-dim:      #c8962c;
+            --amber-container:#fff3d6;
+            --bg:             #f7f9fb;
+            --surface:        #ffffff;
+            --surface-low:    #f2f4f6;
+            --surface-high:   #e9ecf0;
+            --text-primary:   #001430;
+            --text-secondary: #48607d;
+            --text-dim:       #7a90a8;
+            --border:         rgba(0, 20, 48, 0.09);
+            --radius-sm:      8px;
+            --radius-md:      14px;
+            --radius-lg:      20px;
+            --shadow-sm:      0 1px 4px rgba(0,20,48,0.06);
+            --shadow-md:      0 4px 16px rgba(0,20,48,0.09);
+            --shadow-lg:      0 12px 40px rgba(0,20,48,0.12);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Manrope', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        /* ─── HERO ─── */
+        .hero {
+            position: relative;
+            width: 100%;
+            height: 420px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top,
+                rgba(0, 20, 48, 0.95) 0%,
+                rgba(0, 20, 48, 0.55) 50%,
+                transparent 80%);
+            display: flex;
+            align-items: flex-end;
+            padding: 3rem 4%;
+        }
+
+        .hero-inner {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .hero-category {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+            background: var(--amber);
+            padding: 5px 14px;
+            border-radius: 99px;
+            margin-bottom: 14px;
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            color: white;
+            line-height: 1.15;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .hero-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.88rem;
+            color: rgba(255,255,255,0.82);
+            font-weight: 500;
+        }
+
+        .hero-meta-item i {
+            color: var(--amber);
+            font-size: 0.82rem;
+        }
+
+        /* Back button */
+        .back-nav {
+            position: absolute;
+            top: 20px;
+            left: 4%;
+            z-index: 20;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: white;
+            text-decoration: none;
+            padding: 8px 18px;
+            border-radius: 99px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.25);
+            transition: all 0.2s;
+        }
+
+        .back-nav:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateX(-2px);
+        }
+
+        /* ─── MAIN LAYOUT ─── */
+        .page-body {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 4% 80px;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 28px;
+            align-items: start;
+        }
+
+        /* ─── CARDS ─── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 24px 28px 0;
+            border-bottom: none;
+        }
+
+        .card-header h2 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--amber-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .card-header h2 i { font-size: 0.85rem; }
+
+        .card-body {
+            padding: 24px 28px;
+        }
+
+        /* ─── ABOUT CARD ─── */
+        .desc-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.82;
+        }
+
+        /* ─── REGISTER BUTTON ─── */
+        .register-section {
+            padding: 0 28px 28px;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--primary), #002a60);
+            color: white;
+            font-family: 'Manrope', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 16px rgba(56, 143, 255, 0.22);
+        }
+
+        .btn-register:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 8px 28px rgba(56, 143, 255, 0.32);
+        }
+
+        .btn-register:disabled,
+        .btn-register.registered {
+            background: linear-gradient(135deg, #16a34a, #166534);
+            box-shadow: 0 4px 16px rgba(22,163,74,0.22);
+            cursor: default;
+            transform: none;
+        }
+
+        /* ─── SIDEBAR CLUB CARD ─── */
+        .club-card-aside {
+            position: sticky;
+            top: 24px;
+        }
+
+        .club-logo-wrap {
+            padding: 28px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), #002a60);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .club-logo {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255,255,255,0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            background: var(--surface);
+        }
+
+        .club-logo-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-top: 14px;
+        }
+
+        .club-logo-cat {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--primary);
+            background: var(--amber);
+            padding: 4px 12px;
+            border-radius: 99px;
+        }
+
+        .club-info-body {
+            padding: 22px 24px;
+        }
+
+        .club-info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.88rem;
+        }
+
+        .club-info-row:last-child { border-bottom: none; }
+
+        .club-info-row i {
+            color: var(--accent);
+            font-size: 0.85rem;
+            margin-top: 2px;
+            width: 16px;
+            text-align: center;
+        }
+
+        .club-info-row .label {
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .club-info-row .value {
+            color: var(--text-secondary);
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 768px) {
+            .page-body {
+                grid-template-columns: 1fr;
+            }
+
+            .club-card-aside {
+                position: static;
+            }
+
+            .hero { height: 320px; }
+            .hero-title { font-size: 1.7rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dynamic hero background -->
+    <style>
+        .hero-dynamic-bg {
+            background-image: url("{{ url_for('static', filename='uploads/events/' + event.thumbnail) if event.thumbnail else url_for('static', filename='assets/hackathon_banner.png') }}");
+        }
+    </style>
+
+    <div class="hero hero-dynamic-bg">
+        <!-- Back -->
+        <a href="javascript:history.back()" class="back-nav">
+            <i class="fa-solid fa-arrow-left"></i> Back
+        </a>
+
+        <div class="hero-overlay">
+            <div class="hero-inner">
+                <div class="hero-category">
+                    <i class="fa-solid fa-tag"></i>
+                    {{ event.category | title }}
+                </div>
+                <h1 class="hero-title">{{ event.title }}</h1>
+                <div class="hero-meta">
+                    <span class="hero-meta-item">
+                        <i class="fa-regular fa-calendar"></i>
+                        {{ event.date.replace('T', ' ') if event.date else 'TBD' }}
+                    </span>
+                    <span class="hero-meta-item">
+                        <i class="fa-solid fa-location-dot"></i>
+                        {{ event.location | default('TBA') }}
+                    </span>
+                    {% if event.registration_deadline %}
+                    <span class="hero-meta-item">
+                        <i class="fa-solid fa-hourglass-end"></i>
+                        Deadline: {{ event.registration_deadline }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="page-body">
+
+        <!-- Main: About + Register -->
+        <main>
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-circle-info"></i> About the Event</h2>
+                </div>
+                <div class="card-body">
+                    <div class="desc-text">
+                        {{ event.description | replace('\n', '<br>') | safe }}
+                    </div>
+                </div>
+                <div class="register-section">
+                    <button class="btn-register {% if student and event_id in student.get('enrolled_events', []) %}registered{% endif %}"
+                            id="event-detail-register"
+                            data-event-id="{{ event_id }}"
+                            data-form-link="{{ event.google_form_link }}">
+                        {% if student and event_id in student.get('enrolled_events', []) %}
+                            <i class="fa-solid fa-circle-check"></i> Already Registered
+                        {% else %}
+                            <i class="fa-solid fa-pen-to-square"></i> Register for this Event
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Sidebar: Club Info -->
+        <aside class="club-card-aside">
+            <div class="card">
+                <div class="club-logo-wrap">
+                    <img class="club-logo"
+                         src="{{ url_for('static', filename='uploads/clubs/' + club.logo) if club and club.logo else url_for('static', filename='assets/club_logo.png') }}"
+                         alt="{{ club.name if club else 'Club' }}"
+                         onerror="this.src=`{{ url_for('static', filename='assets/club_logo.png') }}`">
+                    <div class="club-logo-title">{{ club.name if club else 'Unknown Club' }}</div>
+                    <span class="club-logo-cat">{{ club.category if club else 'General' }}</span>
+                </div>
+                <div class="club-info-body">
+                    <div class="club-info-row">
+                        <i class="fa-solid fa-envelope"></i>
+                        <div>
+                            <span class="label">Contact</span>
+                            <span class="value">{{ club.manager_email if club else 'contact@mitsgwl.ac.in' }}</span>
+                        </div>
+                    </div>
+                    <div class="club-info-row">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <div>
+                            <span class="label">Note</span>
+                            <span class="value" style="color:var(--text-secondary); line-height:1.6;">
+                                Reach out to the organizers for questions about prerequisites or schedules.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- Register Script — backend logic fully preserved -->
+    <script>
+        document.getElementById('event-detail-register').addEventListener('click', async function() {
+            const btn = this;
+            if (btn.innerText.includes("Already Registered")) {
+                let formLink = btn.getAttribute('data-form-link');
+                if (formLink && formLink.trim() !== '') {
+                    formLink = formLink.trim();
+                    if (!formLink.startsWith('http://') && !formLink.startsWith('https://')) {
+                        formLink = 'https://' + formLink;
+                    }
+                    window.open(formLink, '_blank');
+                }
+                return;
+            }
+            const eventId = btn.getAttribute('data-event-id');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registering...';
+            btn.disabled = true;
+            try {
+                const response = await fetch('/register_event', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ event_id: eventId })
+                });
+                const result = await response.json();
+                if (response.ok && result.status === 'success') {
+                    btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Already Registered';
+                    btn.classList.add('registered');
+                    if (result.redirect_url && result.redirect_url.trim() !== '') {
+                        let link = result.redirect_url.trim();
+                        if (!link.startsWith('http://') && !link.startsWith('https://')) {
+                            link = 'https://' + link;
+                        }
+                        window.open(link, '_blank');
+                    }
+                } else {
+                    if (response.status === 401) {
+                        window.location.href = '/login';
+                    } else {
+                        btn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Register for this Event';
+                        btn.disabled = false;
+                        alert(result.message || 'Error registering');
+                    }
+                }
+            } catch (e) {
+                btn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Register for this Event';
+                btn.disabled = false;
+                alert('Error connecting to server.');
+            }
+        });
+    </script>
+
+</body>
+</html>

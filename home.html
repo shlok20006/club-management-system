@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusConnect | MITS Gwalior — Clubs & Events Hub</title>
+    <meta name="description" content="Discover clubs, attend events, and connect with your college community at MITS Gwalior.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* === Stitch Academic Atelier Design Tokens === */
+        :root {
+            /* Backgrounds */
+            --navy:          #f7f9fb;
+            --navy-mid:      #ffffff;
+            /* Primary — Deep Navy */
+            --blue:          #001430;
+            --blue-light:    #388fff;
+            --blue-glow:     rgba(56, 143, 255, 0.18);
+            /* Accent — Sky Blue */
+            --accent:        #2a6fd6;
+            --accent-light:  #388fff;
+            /* Surfaces */
+            --surface:       #ffffff;
+            --surface-hover: #f2f4f6;
+            --surface-low:   #f2f4f6;
+            /* Tertiary — Amber Gold */
+            --amber:         #eac258;
+            --amber-dim:     #c8962c;
+            --amber-container: #fff3d6;
+            /* Text */
+            --text-primary:   #001430;
+            --text-secondary: #48607d;
+            --text-muted:     #7a90a8;
+            /* Borders */
+            --border: rgba(0, 20, 48, 0.09);
+            /* Radius */
+            --radius: 14px;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--navy);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ─── ANIMATED BACKGROUND ─── */
+        .bg-mesh {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(circle at 15% 50%, rgba(37, 99, 235, 0.12), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(14, 165, 233, 0.12), transparent 25%),
+                radial-gradient(circle at 50% 100%, rgba(14, 165, 233, 0.15), transparent 30%),
+                linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+            pointer-events: none;
+        }
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+        }
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(90px);
+            pointer-events: none;
+            z-index: 0;
+            animation: orb-drift 12s ease-in-out infinite alternate;
+        }
+        .orb-1 { width: 500px; height: 500px; background: rgba(0, 32, 80, 0.10); top: -150px; left: -100px; animation-delay: 0s; }
+        .orb-2 { width: 450px; height: 450px; background: rgba(56, 143, 255, 0.10); top: 30%; right: -150px; animation-delay: -4s; }
+        .orb-3 { width: 600px; height: 600px; background: rgba(234, 194, 88, 0.08); bottom: -200px; left: 20%; animation-delay: -8s; }
+        @keyframes orb-drift { from { transform: translate(0, 0) scale(1); } to { transform: translate(30px, -30px) scale(1.05); } }
+
+        /* ─── NAVBAR ─── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 0 5%;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        .nav-brand-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #001430, #002a60);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: #eac258;
+            box-shadow: 0 4px 15px rgba(56, 143, 255, 0.22);
+        }
+        .nav-brand strong { font-family: 'Manrope', sans-serif; font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; }
+        .nav-links { display: flex; align-items: center; gap: 8px; }
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .nav-link:hover { color: var(--text-primary); background: var(--surface); }
+        .btn-nav-login {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 22px;
+            background: linear-gradient(135deg, #001430, #002a60);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(56, 143, 255, 0.22);
+        }
+        .btn-nav-login:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(56, 143, 255, 0.3); }
+
+        /* ─── WRAPPER ─── */
+        .page-wrap { position: relative; z-index: 1; }
+
+        /* ─── HERO ─── */
+        .hero {
+            min-height: calc(100vh - 70px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 5% 60px;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(14,165,233,0.12);
+            border: 1px solid rgba(14,165,233,0.25);
+            color: var(--accent-light);
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 28px;
+            letter-spacing: 0.5px;
+            animation: fade-in-up 0.6s ease both;
+        }
+        .hero-badge i { font-size: 0.75rem; }
+        .hero h1 {
+            font-family: 'Manrope', sans-serif;
+            font-size: clamp(2.8rem, 6vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+            animation: fade-in-up 0.6s 0.1s ease both;
+        }
+        .hero h1 .grad-text {
+            background: linear-gradient(135deg, #001430, #388fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 580px;
+            margin: 0 auto 44px;
+            line-height: 1.7;
+            animation: fade-in-up 0.6s 0.2s ease both;
+        }
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fade-in-up 0.6s 0.3s ease both;
+        }
+        .btn-primary-hero {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #001430, #002a60);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: all 0.2s;
+            box-shadow: 0 8px 32px rgba(56, 143, 255, 0.22);
+        }
+        .btn-primary-hero:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(56, 143, 255, 0.32); }
+        .btn-ghost-hero {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.25s;
+            backdrop-filter: blur(10px);
+        }
+        .btn-ghost-hero:hover { background: var(--surface-hover); border-color: rgba(0,0,0,0.15); transform: translateY(-3px); }
+        .hero-stats {
+            display: flex;
+            gap: 48px;
+            justify-content: center;
+            margin-top: 64px;
+            padding-top: 48px;
+            border-top: 1px solid var(--border);
+            animation: fade-in-up 0.6s 0.4s ease both;
+            flex-wrap: wrap;
+        }
+        .hero-stat { text-align: center; }
+        .hero-stat .num { font-size: 2rem; font-weight: 800; color: var(--text-primary); letter-spacing: -1px; }
+        .hero-stat .lbl { font-size: 0.82rem; color: var(--text-muted); font-weight: 500; margin-top: 4px; }
+
+        /* ─── SECTION COMMON ─── */
+        .section { padding: 100px 5%; }
+        .section-inner { max-width: 1200px; margin: 0 auto; }
+        .section-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--amber-dim);
+            margin-bottom: 14px;
+            background: var(--amber-container);
+            padding: 4px 12px;
+            border-radius: 99px;
+        }
+        .section-tag::before { display: none; }
+        .section-title {
+            font-family: 'Manrope', sans-serif;
+            font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.2;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .section-subtitle { color: var(--text-secondary); font-size: 1rem; max-width: 540px; }
+
+        /* ─── EVENTS ─── */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 24px;
+            margin-top: 48px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 10px;
+            scroll-behavior: smooth;
+        }
+        .events-grid::-webkit-scrollbar, .clubs-grid::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .events-grid::-webkit-scrollbar-track, .clubs-grid::-webkit-scrollbar-track {
+            background: rgba(0, 20, 48, 0.05);
+            border-radius: 8px;
+        }
+        .events-grid::-webkit-scrollbar-thumb, .clubs-grid::-webkit-scrollbar-thumb {
+            background: var(--blue-light);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .events-grid::-webkit-scrollbar-thumb:hover, .clubs-grid::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+        @keyframes floatCard {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); box-shadow: 0 15px 30px rgba(37,99,235,0.12); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes pulseBorder {
+            0% { border-color: rgba(37, 99, 235, 0.1); }
+            50% { border-color: rgba(37, 99, 235, 0.4); }
+            100% { border-color: rgba(37, 99, 235, 0.1); }
+        }
+        @keyframes gradientShine {
+            to { background-position: 200% center; }
+        }
+
+        .event-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            backdrop-filter: blur(10px);
+            animation: floatCard 7s ease-in-out infinite;
+        }
+        .event-card:nth-child(even) { animation-delay: 1.5s; }
+        .event-card:nth-child(3n) { animation-delay: 3s; }
+        .event-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--blue-glow);
+            box-shadow: 0 25px 50px rgba(37,99,235,0.2), 0 0 0 2px var(--blue-glow);
+            animation-play-state: paused;
+            z-index: 10;
+        }
+        .event-card-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .event-card:hover .event-card-img { transform: scale(1.08) rotate(-1deg); }
+        .event-card-img-wrap { overflow: hidden; position: relative; }
+        .event-card-img-wrap::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,20,48,0.7), transparent 60%);
+            opacity: 0.6;
+            transition: opacity 0.4s;
+        }
+        .event-card:hover .event-card-img-wrap::after { opacity: 0.8; }
+        .event-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 2;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            backdrop-filter: blur(4px);
+        }
+        .badge-tech { background: rgba(37,99,235,0.85); color: white; }
+        .badge-cultural { background: rgba(14,165,233,0.85); color: white; }
+        .badge-sports { background: rgba(16,185,129,0.85); color: white; }
+        .badge-management { background: rgba(245,158,11,0.85); color: white; }
+        .badge-recruitment { background: rgba(14,165,233,0.85); color: white; }
+        .badge-default { background: rgba(100,116,139,0.85); color: white; }
+        .event-card-body { padding: 20px; }
+        .event-card-meta { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+        .event-meta-item { display: flex; align-items: center; gap: 5px; font-size: 0.78rem; color: var(--text-muted); }
+        .event-meta-item i { color: var(--blue-light); font-size: 0.7rem; }
+        .event-card-title { font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3; transition: color 0.3s; }
+        .event-card:hover .event-card-title { color: var(--accent); }
+        .event-card-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 18px;
+        }
+        .event-card-footer { display: flex; align-items: center; justify-content: space-between; }
+        .event-host { display: flex; align-items: center; gap: 8px; }
+        .event-host-logo {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+        }
+        .event-host-name { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; }
+        .btn-event-join {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            background: linear-gradient(135deg, #001430, #002a60);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn-event-join:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(56, 143, 255, 0.3); }
+        .event-no-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: default;
+        }
+
+        /* ─── CLUBS ─── */
+        .clubs-grid {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 24px;
+            margin-top: 48px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 20px 10px;
+            scroll-behavior: smooth;
+        }
+        .club-card {
+            flex: 0 0 auto;
+            width: 280px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            position: relative;
+            animation: floatCard 6s ease-in-out infinite, pulseBorder 4s linear infinite;
+        }
+        .club-card:nth-child(even) { animation-delay: 1s, 0.5s; }
+        .club-card:nth-child(3n) { animation-delay: 2s, 1s; }
+        .club-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #001430, #388fff, #eac258);
+            opacity: 0;
+            transition: opacity 0.4s;
+            background-size: 200% auto;
+            animation: gradientShine 3s linear infinite;
+        }
+        .club-card:hover { 
+            transform: translateY(-12px) scale(1.02); 
+            border-color: var(--accent); 
+            box-shadow: 0 20px 40px rgba(37,99,235,0.25), 0 0 0 2px rgba(37,99,235,0.1); 
+            animation-play-state: paused;
+            z-index: 10;
+        }
+        .club-card:hover::before { opacity: 1; }
+        .club-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            object-fit: cover;
+            border: 3px solid transparent;
+            background: linear-gradient(var(--surface), var(--surface)) padding-box,
+                        linear-gradient(135deg, #388fff, #eac258) border-box;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .club-card:hover .club-logo {
+            transform: scale(1.15) rotate(5deg);
+        }
+        .club-name { font-size: 1.1rem; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; }
+        .club-category {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            background: rgba(37,99,235,0.15);
+            color: var(--blue-light);
+            margin-bottom: 12px;
+        }
+        .club-manager { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 16px; }
+        .club-join-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 20px;
+            border: 1px solid rgba(37,99,235,0.4);
+            color: var(--blue-light);
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            background: rgba(37,99,235,0.08);
+        }
+        .club-join-btn:hover { background: rgba(37,99,235,0.2); border-color: var(--blue); color: white; }
+
+        /* ─── HOW IT WORKS ─── */
+        .how-section { background: rgba(0,0,0,0.02); border-top: 1px solid var(--border); }
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 32px;
+            margin-top: 56px;
+        }
+        .step-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            position: relative;
+            transition: all 0.3s;
+        }
+        .step-card:hover { border-color: var(--blue-glow); transform: translateY(-4px); box-shadow: 0 12px 30px rgba(37,99,235,0.08); }
+        .step-num {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: rgba(37,99,235,0.15);
+            line-height: 1;
+            margin-bottom: 16px;
+            letter-spacing: -3px;
+        }
+        .step-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(37,99,235,0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blue-light);
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+        }
+        .step-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+        .step-card p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+
+        /* ─── CTA BANNER ─── */
+        .cta-section { padding: 80px 5%; text-align: center; }
+        .cta-box {
+            max-width: 700px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(37,99,235,0.15) 0%, rgba(14,165,233,0.1) 100%);
+            border: 1px solid rgba(37,99,235,0.25);
+            border-radius: 24px;
+            padding: 60px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(37,99,235,0.2), transparent 70%);
+        }
+        .cta-box h2 { font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 800; letter-spacing: -1px; margin-bottom: 16px; position: relative; }
+        .cta-box p { color: var(--text-secondary); margin-bottom: 36px; font-size: 1rem; position: relative; }
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #001430, #002a60);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 1.05rem;
+            font-weight: 700;
+            position: relative;
+            transition: all 0.2s;
+            box-shadow: 0 8px 32px rgba(56, 143, 255, 0.22);
+        }
+        .cta-btn:hover { transform: translateY(-3px); box-shadow: 0 16px 48px rgba(56, 143, 255, 0.32); }
+
+        /* ─── FOOTER ─── */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 5%;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+        footer a { color: var(--text-secondary); text-decoration: none; }
+        footer a:hover { color: var(--text-primary); }
+
+        /* ─── LOGIN MODAL ─── */
+        .login-prompt-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-prompt-overlay.active { display: flex; }
+        .login-prompt-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px 36px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+            animation: zoom-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        @keyframes zoom-in { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+        .login-prompt-close {
+            position: absolute;
+            top: 16px; right: 16px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .login-prompt-close:hover { color: var(--text-primary); }
+        .login-prompt-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(37,99,235,0.15);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: var(--blue-light);
+            margin: 0 auto 20px;
+        }
+        .login-prompt-box h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 10px; color: var(--text-primary); }
+        .login-prompt-box p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 28px; line-height: 1.6; }
+        .login-prompt-event-name {
+            background: rgba(37,99,235,0.10);
+            border: 1px solid rgba(37,99,235,0.25);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 0.88rem;
+            color: var(--blue-light);
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+        .btn-prompt-login {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            box-shadow: 0 4px 16px var(--blue-glow);
+            margin-bottom: 12px;
+        }
+        .btn-prompt-login:hover { box-shadow: 0 8px 28px var(--blue-glow); transform: translateY(-2px); }
+        .btn-prompt-cancel {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            border-radius: 10px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-prompt-cancel:hover { background: var(--surface); }
+
+        /* ─── EMPTY STATE ─── */
+        .empty-state {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        .empty-state i { font-size: 2.5rem; margin-bottom: 16px; display: block; opacity: 0.4; }
+
+        /* ─── ANIMATIONS ─── */
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 768px) {
+            .hero h1 { letter-spacing: -1px; }
+            .hero-stats { gap: 32px; }
+            .events-grid { grid-template-columns: 1fr; }
+            .clubs-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+            .nav-links .nav-link { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background layers -->
+    <div class="bg-mesh"></div>
+    <div class="bg-grid"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- Navbar -->
+    <nav>
+        <a href="/" class="nav-brand">
+            <div class="nav-brand-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <strong>CampusConnect</strong>
+        </a>
+        <div class="nav-links">
+            <a href="#events" class="nav-link">Events</a>
+            <a href="#clubs" class="nav-link">Clubs</a>
+            <a href="#how-it-works" class="nav-link">How It Works</a>
+            <a href="{{ url_for('login') }}" class="btn-nav-login">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> Login
+            </a>
+        </div>
+    </nav>
+
+    <div class="page-wrap">
+        <!-- ─── HERO ─── -->
+        <section class="hero">
+            <div class="hero-badge">
+                <i class="fa-solid fa-bolt"></i> MITS Gwalior — Student Hub
+            </div>
+            <h1>
+                Your Campus.<br>
+                <span class="grad-text">Reimagined.</span>
+            </h1>
+            <p>Discover clubs, register for events, and connect with your college community — all from one place.</p>
+            <div class="hero-cta">
+                <a href="{{ url_for('login') }}" class="btn-primary-hero">
+                    Get Started <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a href="#events" class="btn-ghost-hero">
+                    <i class="fa-solid fa-calendar-star"></i> Browse Events
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="num">{{ clubs|length }}</div>
+                    <div class="lbl">Active Clubs</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="num">{{ events|length }}</div>
+                    <div class="lbl">Live Events</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="num">∞</div>
+                    <div class="lbl">Opportunities</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── EVENTS ─── -->
+        <section class="section" id="events">
+            <div class="section-inner">
+                <div class="reveal">
+                    <span class="section-tag">Latest Events</span>
+                    <h2 class="section-title">What's Happening Now</h2>
+                    <p class="section-subtitle">Click "Join Now" to register — login required for Google Form access.</p>
+                </div>
+                <div class="events-grid">
+                    {% if events %}
+                        {% for eid, event in events.items() %}
+                        <div class="event-card reveal">
+                            <div class="event-card-img-wrap">
+                                <img class="event-card-img"
+                                    src="{{ url_for('static', filename='uploads/events/' + event.thumbnail) if event.thumbnail else url_for('static', filename='assets/hackathon_banner.png') }}"
+                                    alt="{{ event.title }}"
+                                    onerror="this.src=`{{ url_for('static', filename='assets/hackathon_banner.png') }}`">
+                                <span class="event-badge badge-{{ event.category|lower|replace(' ', '') if event.category else 'default' }}">
+                                    {{ event.category }}
+                                </span>
+                            </div>
+                            <div class="event-card-body">
+                                <div class="event-card-meta">
+                                    <span class="event-meta-item">
+                                        <i class="fa-regular fa-calendar"></i>
+                                        {{ event.date.replace('T', ' ')[:10] if event.date else 'TBD' }}
+                                    </span>
+                                    <span class="event-meta-item">
+                                        <i class="fa-solid fa-location-dot"></i>
+                                        {{ event.location or 'MITS Campus' }}
+                                    </span>
+                                </div>
+                                <h3 class="event-card-title">{{ event.title }}</h3>
+                                <p class="event-card-desc">{{ event.description }}</p>
+                                <div class="event-card-footer">
+                                    {% set host_club = clubs.get(event.club_id, {}) %}
+                                    <div class="event-host">
+                                        <img class="event-host-logo"
+                                            src="{{ url_for('static', filename='uploads/clubs/' + host_club.logo) if host_club and host_club.get('logo') else url_for('static', filename='assets/club_logo.png') }}"
+                                            alt="{{ host_club.get('name', 'Club') }}"
+                                            onerror="this.src=`{{ url_for('static', filename='assets/club_logo.png') }}`">
+                                        <span class="event-host-name">{{ host_club.get('name', 'College Club') }}</span>
+                                    </div>
+                                    {% if event.google_form_link %}
+                                    <button class="btn-event-join home-event-join"
+                                        data-form="{{ event.google_form_link }}"
+                                        data-name="{{ event.title }}">
+                                        <i class="fa-solid fa-pen-to-square"></i> Join Now
+                                    </button>
+                                    {% else %}
+                                    <span class="event-no-link">
+                                        <i class="fa-solid fa-circle-info"></i> Details Only
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="fa-regular fa-calendar-xmark"></i>
+                        <p>No upcoming events right now. Check back soon!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── CLUBS ─── -->
+        <section class="section" id="clubs" style="padding-top:0;">
+            <div class="section-inner">
+                <div class="reveal">
+                    <span class="section-tag">Our Clubs</span>
+                    <h2 class="section-title">Explore All Clubs</h2>
+                    <p class="section-subtitle">From tech to culture — find your tribe and join today.</p>
+                </div>
+                <div class="clubs-grid">
+                    {% if clubs %}
+                        {% for cid, club in clubs.items() %}
+                        <div class="club-card reveal">
+                            <img class="club-logo"
+                                src="{{ url_for('static', filename='uploads/clubs/' + club.logo) if club.get('logo') else url_for('static', filename='assets/club_logo.png') }}"
+                                alt="{{ club.name }}"
+                                onerror="this.src=`{{ url_for('static', filename='assets/club_logo.png') }}`">
+                            <div class="club-name">{{ club.name }}</div>
+                            <span class="club-category">{{ club.category }}</span>
+                            <div class="club-manager"><i class="fa-solid fa-user-tie" style="margin-right:5px;"></i>{{ club.manager_email }}</div>
+                            <a href="{{ url_for('login') }}" class="club-join-btn">
+                                <i class="fa-solid fa-right-to-bracket"></i> Join Club
+                            </a>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="fa-solid fa-users-slash"></i>
+                        <p>No clubs registered yet. Check back soon!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── HOW IT WORKS ─── -->
+        <section class="section how-section" id="how-it-works">
+            <div class="section-inner">
+                <div class="reveal" style="text-align:center; margin-bottom:0;">
+                    <span class="section-tag">Process</span>
+                    <h2 class="section-title">How It Works</h2>
+                    <p class="section-subtitle" style="max-width:100%; text-align:center; margin:0 auto;">Four simple steps to get started on CampusConnect.</p>
+                </div>
+                <div class="steps-grid">
+                    <div class="step-card reveal">
+                        <div class="step-num">01</div>
+                        <div class="step-icon"><i class="fa-solid fa-user-plus"></i></div>
+                        <h4>Create Account</h4>
+                        <p>Register with your official MITS email to unlock all features of the platform.</p>
+                    </div>
+                    <div class="step-card reveal">
+                        <div class="step-num">02</div>
+                        <div class="step-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                        <h4>Browse Events</h4>
+                        <p>Explore the latest happenings across departments, clubs, and college committees.</p>
+                    </div>
+                    <div class="step-card reveal">
+                        <div class="step-num">03</div>
+                        <div class="step-icon"><i class="fa-brands fa-google"></i></div>
+                        <h4>Register via Form</h4>
+                        <p>Click "Join Now" to be redirected to the official Google Form for the event.</p>
+                    </div>
+                    <div class="step-card reveal">
+                        <div class="step-num">04</div>
+                        <div class="step-icon"><i class="fa-solid fa-trophy"></i></div>
+                        <h4>Track Your Journey</h4>
+                        <p>View your enrolled events and clubs right in your personal student profile.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── CTA ─── -->
+        <section class="cta-section">
+            <div class="cta-box reveal">
+                <h2>Ready to get involved?</h2>
+                <p>Join hundreds of MITS students already using CampusConnect to make the most of college life.</p>
+                <a href="{{ url_for('login') }}" class="cta-btn">
+                    Login &amp; Explore <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- ─── FOOTER ─── -->
+        <footer>
+            <p>© 2026 <strong>CampusConnect</strong> — MITS Gwalior &nbsp;|&nbsp; <a href="{{ url_for('login') }}">Student Login</a></p>
+            <p>Aditya Prajapati | Shlok Shrivastav | Siddhant Rawat</p>
+        </footer>
+    </div>
+
+    <!-- ─── LOGIN REQUIRED MODAL ─── -->
+    <div class="login-prompt-overlay" id="loginPrompt">
+        <div class="login-prompt-box">
+            <button class="login-prompt-close" id="closePrompt"><i class="fa-solid fa-xmark"></i></button>
+            <div class="login-prompt-icon">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h3>Login Required</h3>
+            <p>You need to login with your MITS account to register for this event.</p>
+            <div class="login-prompt-event-name" id="promptEventName">Event Name</div>
+            <a href="{{ url_for('login') }}" class="btn-prompt-login" id="promptLoginBtn">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> Login to Register
+            </a>
+            <button class="btn-prompt-cancel" id="closePromptBtn">Maybe Later</button>
+        </div>
+    </div>
+
+    <script>
+        // ── Scroll Reveal ──
+        const revealEls = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, Math.min(i * 60, 300));
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        revealEls.forEach(el => observer.observe(el));
+
+        // ── Event Join Buttons → Login Prompt ──
+        const loginPrompt = document.getElementById('loginPrompt');
+        const promptEventName = document.getElementById('promptEventName');
+        const promptLoginBtn = document.getElementById('promptLoginBtn');
+        let pendingFormUrl = null;
+
+        // Store the form URL so after login we redirect to it
+        // We encode it as a query param so the login page can handle it
+        document.querySelectorAll('.home-event-join').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const formUrl = btn.getAttribute('data-form');
+                const eventName = btn.getAttribute('data-name');
+                pendingFormUrl = formUrl;
+                promptEventName.textContent = eventName;
+                // Set login URL to include redirect back to google form after login
+                promptLoginBtn.href = "{{ url_for('login') }}?next=" + encodeURIComponent(formUrl) + "&after=student";
+                loginPrompt.classList.add('active');
+            });
+        });
+
+        document.getElementById('closePrompt').addEventListener('click', () => loginPrompt.classList.remove('active'));
+        document.getElementById('closePromptBtn').addEventListener('click', () => loginPrompt.classList.remove('active'));
+        loginPrompt.addEventListener('click', (e) => { if (e.target === loginPrompt) loginPrompt.classList.remove('active'); });
+
+        // ── Smooth scroll for nav links ──
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                const target = document.querySelector(a.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+</body>
+</html>

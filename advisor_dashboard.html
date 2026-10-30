@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advisor Dashboard — {{ club.name }} | CampusConnect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-main: #0d0f1a;
+            --bg-surface: #151828;
+            --bg-card: #1c2033;
+            --accent: #6c63ff;
+            --accent-glow: rgba(108,99,255,0.3);
+            --accent-light: #8b85ff;
+            --success: #22c55e;
+            --success-bg: rgba(34,197,94,0.1);
+            --success-border: rgba(34,197,94,0.3);
+            --danger: #ef4444;
+            --danger-bg: rgba(239,68,68,0.1);
+            --danger-border: rgba(239,68,68,0.3);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245,158,11,0.1);
+            --text-primary: #e8eaf0;
+            --text-secondary: #8a93b2;
+            --border: rgba(255,255,255,0.06);
+            --border-accent: rgba(108,99,255,0.25);
+            --sidebar-w: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.6rem 1.2rem;
+            position: fixed;
+            height: 100vh;
+            top: 0; left: 0;
+            z-index: 100;
+        }
+        .sidebar-brand {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0 0.4rem 1.8rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.8rem;
+        }
+        .brand-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--accent), #4a9eff);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 14px var(--accent-glow);
+            flex-shrink: 0;
+        }
+        .brand-text h2 { font-size: 1rem; font-weight: 700; }
+        .brand-text p  { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.1rem; }
+
+        .advisor-badge {
+            background: linear-gradient(135deg, rgba(108,99,255,0.15), rgba(74,158,255,0.1));
+            border: 1px solid var(--border-accent);
+            border-radius: 12px;
+            padding: 1rem 1.1rem;
+            margin-bottom: 1.8rem;
+        }
+        .advisor-badge .av-name { font-weight: 600; font-size: 0.95rem; }
+        .advisor-badge .av-dept { font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.25rem; }
+        .advisor-badge .av-email { font-size: 0.76rem; color: var(--accent-light); margin-top: 0.2rem; word-break: break-all; }
+
+        .sidebar nav a {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.7rem 0.9rem;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
+            margin-bottom: 0.25rem;
+        }
+        .sidebar nav a:hover, .sidebar nav a.active {
+            background: rgba(108,99,255,0.12);
+            color: var(--text-primary);
+        }
+        .sidebar nav a.active { color: var(--accent-light); }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+        .sidebar-footer a {
+            display: flex; align-items: center; gap: 0.6rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-decoration: none;
+            padding: 0.6rem 0.4rem;
+            border-radius: 8px;
+            transition: color 0.2s;
+        }
+        .sidebar-footer a:hover { color: var(--danger); }
+
+        /* ── Main ── */
+        .main-content {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            padding: 2rem 2.4rem;
+            max-width: calc(100vw - var(--sidebar-w));
+        }
+
+        /* ── Page Header ── */
+        .page-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap; gap: 1rem;
+        }
+        .page-header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .page-header p { font-size: 0.88rem; color: var(--text-secondary); margin-top: 0.2rem; }
+        .token-pill {
+            background: rgba(108,99,255,0.1);
+            border: 1px solid var(--border-accent);
+            border-radius: 20px;
+            padding: 0.4rem 0.9rem;
+            font-size: 0.78rem;
+            color: var(--accent-light);
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        /* ── Stats Row ── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-tile {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.2rem;
+            display: flex; align-items: center; gap: 1rem;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .stat-tile:hover { border-color: var(--border-accent); transform: translateY(-2px); }
+        .stat-tile .tile-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .tile-icon.purple { background: rgba(108,99,255,0.15); color: var(--accent-light); }
+        .tile-icon.green  { background: var(--success-bg); color: var(--success); }
+        .tile-icon.orange { background: var(--warning-bg); color: var(--warning); }
+        .tile-icon.red    { background: var(--danger-bg); color: var(--danger); }
+        .stat-tile .tile-val { font-size: 1.4rem; font-weight: 700; }
+        .stat-tile .tile-label { font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.1rem; }
+
+        /* ── Club Profile Card ── */
+        .club-profile-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.6rem;
+            margin-bottom: 2rem;
+            display: flex; align-items: flex-start; gap: 1.4rem;
+            flex-wrap: wrap;
+        }
+        .club-logo {
+            width: 72px; height: 72px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent), #4a9eff);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .club-logo img { width: 100%; height: 100%; object-fit: cover; }
+        .club-meta { flex: 1; }
+        .club-meta h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.3rem; }
+        .club-meta .badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+        .badge {
+            padding: 0.25rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .badge.category { background: rgba(108,99,255,0.15); color: var(--accent-light); border: 1px solid var(--border-accent); }
+        .badge.active   { background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border); }
+        .club-meta p { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.6; }
+
+        /* ── Section Title ── */
+        .section-title {
+            display: flex; align-items: center; gap: 0.7rem;
+            margin-bottom: 1.2rem;
+        }
+        .section-title h2 { font-size: 1.1rem; font-weight: 600; }
+        .section-title .count-pill {
+            background: rgba(108,99,255,0.15);
+            color: var(--accent-light);
+            border-radius: 20px;
+            padding: 0.2rem 0.65rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        /* ── Event Cards ── */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .event-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+        .event-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+        }
+
+        .event-card-header {
+            padding: 1.2rem 1.4rem 0.8rem;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: flex-start; justify-content: space-between; gap: 0.8rem;
+        }
+        .event-card-header h3 { font-size: 1rem; font-weight: 600; line-height: 1.35; flex: 1; }
+
+        .status-badge {
+            padding: 0.25rem 0.65rem;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .status-badge.draft      { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
+        .status-badge.published  { background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border); }
+        .status-badge.rejected   { background: var(--danger-bg);  color: var(--danger);  border: 1px solid var(--danger-border); }
+
+        .event-card-body {
+            padding: 0.9rem 1.4rem;
+        }
+        .event-meta-row {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.4rem;
+        }
+        .event-meta-row i { width: 14px; text-align: center; color: var(--accent-light); }
+
+        .event-desc {
+            font-size: 0.84rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+            margin-top: 0.7rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .event-card-actions {
+            padding: 0.9rem 1.4rem;
+            border-top: 1px solid var(--border);
+            display: flex; gap: 0.7rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.6rem 0.8rem;
+            border: none;
+            border-radius: 9px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 0.45rem;
+            transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); opacity: 0.85; }
+
+        .btn-approve {
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(34,197,94,0.25);
+        }
+        .btn-reject {
+            background: var(--danger-bg);
+            color: var(--danger);
+            border: 1px solid var(--danger-border);
+        }
+        .btn-reject:hover { background: rgba(239,68,68,0.18); }
+
+        .btn-already {
+            width: 100%;
+            padding: 0.6rem;
+            background: transparent;
+            border: 1px dashed rgba(255,255,255,0.1);
+            border-radius: 9px;
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            text-align: center;
+        }
+
+        /* ── Empty State ── */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+        .empty-state .empty-icon {
+            width: 80px; height: 80px;
+            background: rgba(108,99,255,0.1);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem;
+            color: var(--accent-light);
+            margin: 0 auto 1.2rem;
+        }
+        .empty-state h3 { font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .empty-state p { font-size: 0.87rem; }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed; bottom: 1.5rem; right: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--success-border);
+            border-radius: 12px;
+            padding: 0.9rem 1.2rem;
+            font-size: 0.88rem;
+            color: var(--success);
+            display: none; align-items: center; gap: 0.6rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            z-index: 9999;
+            animation: slideInRight 0.3s ease;
+        }
+        @keyframes slideInRight { from { transform: translateX(60px); opacity:0; } to { transform: translateX(0); opacity:1; } }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; padding: 1.2rem; max-width: 100vw; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div class="brand-text">
+                <h2>CampusConnect</h2>
+                <p>Advisor Portal</p>
+            </div>
+        </div>
+
+        <!-- Advisor Identity Card -->
+        <div class="advisor-badge">
+            <div class="av-name">
+                <i class="fa-solid fa-user-tie" style="color:var(--accent-light); margin-right:0.4rem;"></i>
+                {{ advisor.name or 'Faculty Advisor' }}
+            </div>
+            <div class="av-dept">{{ advisor.department or '' }}</div>
+            <div class="av-email">{{ advisor.email or '' }}</div>
+        </div>
+
+        <nav>
+            <a href="#" class="active">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+            <a href="#events-section">
+                <i class="fa-solid fa-calendar-check"></i> Event Requests
+                {% set pending = events.values() | selectattr('status', 'equalto', 'Draft') | list %}
+                {% if pending %}
+                <span style="margin-left:auto; background:var(--warning); color:#000; border-radius:20px; padding:0.1rem 0.5rem; font-size:0.72rem; font-weight:700;">
+                    {{ pending|length }}
+                </span>
+                {% endif %}
+            </a>
+            <a href="#president-section">
+                <i class="fa-solid fa-crown"></i> Manage President
+            </a>
+            <a href="https://dcs.mitsgwalior.in/login" target="_blank">
+                <i class="fa-solid fa-globe"></i> Website Login
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="/advisor-login">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Exit / New Login
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Header -->
+        <div class="page-header">
+            <div>
+                <h1>{{ club.name }}</h1>
+                <p>Faculty Advisor Dashboard &mdash; Read-only club view with event review controls</p>
+            </div>
+            <div class="token-pill">
+                <i class="fa-solid fa-shield-halved"></i>
+                Secure Session Active
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        {% set total_events    = events | length %}
+        {% set draft_events    = events.values() | selectattr('status', 'equalto', 'Draft')     | list | length %}
+        {% set pub_events      = events.values() | selectattr('status', 'equalto', 'Published') | list | length %}
+        {% set rej_events      = events.values() | selectattr('status', 'equalto', 'Rejected')  | list | length %}
+
+        <div class="stats-row">
+            <div class="stat-tile">
+                <div class="tile-icon purple"><i class="fa-solid fa-calendar"></i></div>
+                <div>
+                    <div class="tile-val">{{ total_events }}</div>
+                    <div class="tile-label">Total Events</div>
+                </div>
+            </div>
+            <div class="stat-tile">
+                <div class="tile-icon orange"><i class="fa-solid fa-hourglass-half"></i></div>
+                <div>
+                    <div class="tile-val">{{ draft_events }}</div>
+                    <div class="tile-label">Pending Review</div>
+                </div>
+            </div>
+            <div class="stat-tile">
+                <div class="tile-icon green"><i class="fa-solid fa-circle-check"></i></div>
+                <div>
+                    <div class="tile-val">{{ pub_events }}</div>
+                    <div class="tile-label">Approved / Live</div>
+                </div>
+            </div>
+            <div class="stat-tile">
+                <div class="tile-icon red"><i class="fa-solid fa-circle-xmark"></i></div>
+                <div>
+                    <div class="tile-val">{{ rej_events }}</div>
+                    <div class="tile-label">Rejected</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Club Profile Card -->
+        <div class="club-profile-card">
+            <div class="club-logo">
+                {% if club.logo %}
+                    <img src="/static/uploads/clubs/{{ club.logo }}"
+                         alt="{{ club.name }}"
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-solid fa-people-group\'></i>'">
+                {% else %}
+                    <i class="fa-solid fa-people-group"></i>
+                {% endif %}
+            </div>
+            <div class="club-meta">
+                <h2>{{ club.name }}</h2>
+                <div class="badges">
+                    <span class="badge category">{{ club.category }}</span>
+                    <span class="badge active">{{ club.status | title }}</span>
+                </div>
+                <p>{{ club.about or 'No club description added yet.' }}</p>
+            </div>
+        </div>
+
+        <!-- Event Requests Section -->
+        <div id="events-section">
+            <div class="section-title">
+                <h2><i class="fa-solid fa-calendar-check" style="color:var(--accent-light);"></i> Event Requests</h2>
+                {% if events %}
+            {% endif %}
+        </div>
+
+        <!-- President Management Section -->
+        <div id="president-section" style="margin-top: 3rem;">
+            <div class="section-title">
+                <h2><i class="fa-solid fa-crown" style="color:var(--warning);"></i> Club President Management</h2>
+            </div>
+            
+            <div class="card" style="padding: 2rem; max-width: 800px;">
+                {% if club.president_email %}
+                <div style="display:flex; align-items:center; gap:1.5rem; padding:1.5rem; 
+                            background: rgba(108,99,255,0.05); border: 1px solid var(--border-accent); 
+                            border-radius:16px; margin-bottom:2rem;">
+                    <div style="width:64px; height:64px; border-radius:50%;
+                                background:linear-gradient(135deg, var(--accent), #4a9eff);
+                                display:flex; align-items:center; justify-content:center;
+                                color:white; font-weight:800; font-size:1.5rem; flex-shrink:0;">
+                        {{ club.president_name[0].upper() if club.president_name else 'P' }}
+                    </div>
+                    <div style="flex:1;">
+                        <h3 style="font-size:1.1rem; font-weight:700;">{{ club.president_name }}</h3>
+                        <p style="color:var(--text-secondary); font-size:0.9rem; margin-top:2px;">{{ club.president_email }}</p>
+                        <span style="display:inline-block; margin-top:8px; padding:3px 12px; border-radius:99px;
+                                     font-size:0.75rem; font-weight:700; text-transform:uppercase; 
+                                     background:rgba(108,99,255,0.1); color:var(--accent-light); border:1px solid var(--border-accent);">
+                            <i class="fa-solid fa-crown"></i> Current President
+                        </span>
+                    </div>
+                    <form action="/advisor/remove_president" method="POST" 
+                          onsubmit="return confirm('Dismiss {{ club.president_name }} as president? They will lose manager access.');">
+                        <input type="hidden" name="token" value="{{ token }}">
+                        <button type="submit" class="btn btn-reject" style="padding: 0.7rem 1.2rem;">
+                            <i class="fa-solid fa-user-minus"></i> Dismiss President
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="empty-state" style="padding: 2rem 0;">
+                    <div class="empty-icon" style="width:60px; height:60px; font-size:1.5rem;"><i class="fa-solid fa-crown"></i></div>
+                    <h3>No President Assigned</h3>
+                    <p>Assign a student as the club president to give them manager dashboard access.</p>
+                </div>
+                {% endif %}
+
+                <div style="border-top:1px solid var(--border); padding-top:2rem;">
+                    <h3 style="font-size:1rem; margin-bottom:1rem;">{{ 'Update' if club.president_email else 'Assign New' }} President</h3>
+                    <form action="/advisor/assign_president" method="POST" style="display:grid; gap:1.2rem;">
+                        <input type="hidden" name="token" value="{{ token }}">
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label style="display:block; font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.5rem;">President Name</label>
+                                <input type="text" name="president_name" required 
+                                       placeholder="Full Name"
+                                       style="width:100%; background:var(--bg-main); border:1px solid var(--border); 
+                                              border-radius:10px; padding:0.8rem; color:white; outline:none;">
+                            </div>
+                            <div class="form-group">
+                                <label style="display:block; font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.5rem;">President Email (Gmail)</label>
+                                <input type="email" name="president_email" required 
+                                       placeholder="email@gmail.com"
+                                       style="width:100%; background:var(--bg-main); border:1px solid var(--border); 
+                                              border-radius:10px; padding:0.8rem; color:white; outline:none;">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-approve" style="width:100%; padding:0.9rem;">
+                            <i class="fa-solid fa-user-plus"></i> Confirm Appointment
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Events Section -->
+        <div id="events-section">
+            <div class="section-title">
+                <h2><i class="fa-solid fa-calendar-check" style="color:var(--accent-light);"></i> Event Requests</h2>
+                {% if events %}
+                <span class="count-pill">{{ events | length }} events</span>
+                {% endif %}
+            </div>
+
+            {% if events %}
+            <div class="events-grid">
+                {% for eid, ev in events.items() %}
+                <div class="event-card">
+                    <div class="event-card-header">
+                        <h3>{{ ev.title or 'Untitled Event' }}</h3>
+                        {% set st = ev.status | lower %}
+                        <span class="status-badge {{ st }}">{{ ev.status }}</span>
+                    </div>
+
+                    <div class="event-card-body">
+                        {% if ev.date %}
+                        <div class="event-meta-row">
+                            <i class="fa-regular fa-calendar"></i>
+                            {{ ev.date }}
+                        </div>
+                        {% endif %}
+                        {% if ev.location %}
+                        <div class="event-meta-row">
+                            <i class="fa-solid fa-location-dot"></i>
+                            {{ ev.location }}
+                        </div>
+                        {% endif %}
+                        {% if ev.category %}
+                        <div class="event-meta-row">
+                            <i class="fa-solid fa-tag"></i>
+                            {{ ev.category }}
+                        </div>
+                        {% endif %}
+                        {% if ev.registration_deadline %}
+                        <div class="event-meta-row">
+                            <i class="fa-solid fa-clock"></i>
+                            Deadline: {{ ev.registration_deadline }}
+                        </div>
+                        {% endif %}
+                        {% if ev.description %}
+                        <p class="event-desc">{{ ev.description }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="event-card-actions">
+                        {% if ev.status == 'Draft' %}
+                        <!-- Approve button -->
+                        <form action="/advisor/review_event" method="POST" style="flex:1; display:flex;">
+                            <input type="hidden" name="token"    value="{{ token }}">
+                            <input type="hidden" name="event_id" value="{{ eid }}">
+                            <input type="hidden" name="action"   value="approve">
+                            <button type="submit" class="btn btn-approve" id="approve-{{ eid }}">
+                                <i class="fa-solid fa-check"></i> Approve
+                            </button>
+                        </form>
+                        <!-- Reject button -->
+                        <form action="/advisor/review_event" method="POST" style="flex:1; display:flex;">
+                            <input type="hidden" name="token"    value="{{ token }}">
+                            <input type="hidden" name="event_id" value="{{ eid }}">
+                            <input type="hidden" name="action"   value="reject">
+                            <button type="submit" class="btn btn-reject" id="reject-{{ eid }}"
+                                    onclick="return confirm('Are you sure you want to reject this event?')">
+                                <i class="fa-solid fa-xmark"></i> Reject
+                            </button>
+                        </form>
+                        {% elif ev.status == 'Published' %}
+                        <div class="btn-already" style="flex:2;">
+                            <i class="fa-solid fa-circle-check" style="color:var(--success);"></i>
+                            Approved &amp; Live
+                        </div>
+                        <!-- Delete button for published events -->
+                        <form action="/advisor/delete_event" method="POST" style="flex:1; display:flex;">
+                            <input type="hidden" name="token"    value="{{ token }}">
+                            <input type="hidden" name="event_id" value="{{ eid }}">
+                            <button type="submit" class="btn btn-reject" style="background:rgba(239,68,68,0.05);"
+                                    onclick="return confirm('Delete this event? This action cannot be undone.')">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </form>
+                        {% elif ev.status == 'Rejected' %}
+                        <div class="btn-already" style="color:var(--danger); border-color:var(--danger-border);">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                            Rejected
+                        </div>
+                        {% else %}
+                        <div class="btn-already">Status: {{ ev.status }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% else %}
+            <!-- Empty State -->
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fa-solid fa-calendar-xmark"></i>
+                </div>
+                <h3>No Events Yet</h3>
+                <p>Your club's events will appear here once the club manager creates them. You can then review, approve, or reject them.</p>
+            </div>
+            {% endif %}
+        </div>
+
+    </main>
+
+    <!-- Toast Notification (optional, shown via JS on load if action was taken) -->
+    <div class="toast" id="actionToast">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toastMsg">Action completed successfully!</span>
+    </div>
+
+    <script>
+        // Show toast if URL has ?action= param (from redirect after review)
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('done')) {
+            const toast = document.getElementById('actionToast');
+            const msg = document.getElementById('toastMsg');
+            const action = params.get('done');
+            
+            if (action === 'approved') msg.textContent = 'Event approved and published!';
+            else if (action === 'rejected') msg.textContent = 'Event has been rejected.';
+            else if (action === 'event_deleted') msg.textContent = 'Event has been deleted.';
+            else if (action === 'president_assigned') msg.textContent = 'New president successfully appointed!';
+            else if (action === 'president_removed') msg.textContent = 'President has been dismissed.';
+            
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 3500);
+        }
+    </script>
+</body>
+</html>

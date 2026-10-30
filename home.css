@@ -1,0 +1,274 @@
+:root {
+    /* The Core Palette Matching Super Admin Theme */
+    --mits-navy: #0f2a44;       
+    --mits-blue: #1e88ff;       
+    --premium-gold: #e0b84f;    
+    --soft-white: #f5f7fb;      
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(0, 35, 71, 0.12);
+    --glass-shadow: 0 10px 30px rgba(0, 35, 71, 0.08);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background: linear-gradient(180deg, #f5f7fb 0%, #eef3f9 100%);
+    color: #2d3436;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header - Modern Glassmorphism approach */
+header {
+    background: rgba(15, 42, 68, 0.95);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 1.25rem 5%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0, 35, 71, 0.2);
+    border-bottom: 2px solid var(--premium-gold);
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.header-logo {
+    color: var(--premium-gold);
+    font-size: 1.8rem;
+}
+
+header h1 {
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 0.5px;
+}
+
+/* Main Hero Section */
+main {
+    flex: 1;
+    padding: 100px 5% 80px;
+    text-align: center;
+    /* Adding subtle background radial gradient matching aesthetic */
+    background: radial-gradient(circle at 50% 0%, rgba(30,136,255,0.08) 0%, transparent 60%);
+}
+
+.heading {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.heading h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--mits-navy);
+    margin-bottom: 20px;
+    letter-spacing: -1.5px;
+    line-height: 1.2;
+}
+
+.highlight {
+    color: var(--mits-blue);
+    background: linear-gradient(120deg, transparent 0%, rgba(30,136,255,0.15) 100%);
+    border-radius: 4px;
+    padding: 0 8px;
+}
+
+.heading p {
+    font-size: 1.2rem;
+    color: #556270;
+    max-width: 650px;
+    margin: 0 auto 40px;
+    font-weight: 400;
+}
+
+/* Login Button Container */
+.option {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Upgraded Login Button */
+.btn-login {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 45px;
+    text-decoration: none;
+    border-radius: 50px; /* Pill shape for modern look */
+    font-weight: 700;
+    font-size: 1.15rem;
+    background: linear-gradient(135deg, var(--mits-blue) 0%, #0057c2 100%);
+    color: white;
+    box-shadow: 0 8px 25px rgba(30,136,255,0.4);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-login:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(30,136,255,0.5);
+}
+
+/* Featured Ads Section */
+.featured-ads-section {
+    padding: 80px 5%;
+    background: white;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(224, 184, 79, 0.15);
+    color: #b58d20;
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    border: 1px solid rgba(224, 184, 79, 0.3);
+}
+
+.featured-ads-section h3 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--mits-navy);
+    margin-bottom: 40px;
+    letter-spacing: -0.5px;
+}
+
+/* Ad Cards Container */
+.ad-cards-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 40px;
+    text-align: left;
+}
+
+/* Ad Card styling with Premium Glassmorphism */
+.ad-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.ad-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--premium-gold), #f4d06f);
+    z-index: 10;
+}
+
+.ad-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 35, 71, 0.12);
+}
+
+.ad-content {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.ad-content h4 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--mits-navy);
+}
+
+.ad-content p {
+    color: #556270;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    flex: 1;
+}
+
+.ad-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #9c7a18;
+    font-weight: 600;
+    font-size: 0.75rem;
+    background: rgba(224,184,79,0.15);
+    padding: 5px 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    align-self: flex-start;
+}
+
+.ad-img-link {
+    display: block;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-top: auto;
+}
+
+.ad-content img {
+    width: 100%;
+    height: 300px;
+    object-fit: contain;
+    background: #fdfdfd;
+    display: block;
+    transition: transform 0.4s ease, filter 0.4s ease;
+    filter: brightness(0.96) contrast(1.02);
+}
+
+.ad-card:hover img {
+    transform: scale(1.03);
+    filter: brightness(1.02);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .heading h1 {
+        font-size: 2.5rem;
+    }
+    main {
+        padding: 60px 5% 40px;
+    }
+    .ad-cards-container {
+        gap: 30px;
+    }
+    .ad-content img {
+        height: auto;
+        max-height: 250px;
+    }
+}

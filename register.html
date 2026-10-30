@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration | CampusConnect</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="{{url_for('static',filename='register-style.css')}}">
+
+    <!--<script src="{{ url_for('static', filename='register-script.js') }}"></script>
+-->
+</head>
+<body>
+    <div class="register-wrapper">
+        <div class="register-card">
+            <div class="register-header">
+                <h2>Create an Account</h2>
+                <p>Join CampusConnect and explore your campus.</p>
+            </div>
+            {% if error %}
+            <p style="color: #dc2626; background: #fee2e2; padding: 10px; border-radius: 5px; text-align: center;">
+                {{ error }}
+            </p>
+            {% endif %}
+            <form id="register-form" action="/new_user" method="POST">
+                
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="fullname">Full Name</label>
+                        <div class="input-field">
+                            <i class="fa-regular fa-user"></i>
+                            <input type="text" id="fullname" name="student_name" placeholder="Aditya Prajapati" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="college-id">College ID Number</label>
+                        <div class="input-field">
+                            <i class="fa-solid fa-id-card"></i>
+                            <input type="text" id="college-id" name="student_col_id" placeholder="CS2024-001" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="email">College Email ID</label>
+                    <div class="input-field">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" id="email" name="student_col_email" placeholder="aditya2007@mitsgwl.ac.in" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="branch">Branch</label>
+                        <div class="input-field">
+                            <i class="fa-solid fa-code-branch"></i>
+                            <select id="branch" name="student_branch" required>
+                                <option value="" disabled selected>Select your branch</option>
+                                <option value="Ai & Data Science"> Ai & Data Science</option>
+                                <option value="AiML"> AiML</option>
+                                <option value="CSE">Computer Science (CSE)</option>
+                                <option value="IT">Information Technology (IT)</option>
+                                <option value="ECE">Electronics (ECE)</option>
+                                <option value="EE">Electrical (EE)</option>
+                                <option value="ME">Mechanical (ME)</option>
+                                <option value="CE">Civil (CE)</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="year">Year</label>
+                        <div class="input-field">
+                            <i class="fa-regular fa-calendar"></i>
+                            <select id="year" name="student_year" required>
+                                <option value="" disabled selected>Select your year</option>
+                                <option value="1st Year">1st Year</option>
+                                <option value="2nd Year">2nd Year</option>
+                                <option value="3rd Year">3rd Year</option>
+                                <option value="4th Year">4th Year</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <div class="input-field">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="password" name="temp_password" placeholder="Create a password" required>
+                            <button type="button" class="toggle-pwd-btn" aria-label="Toggle password visibility">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <div class="input-field">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="confirm-password" name="conform_password" placeholder="Confirm password" required>
+                            <button type="button" class="toggle-pwd-btn" aria-label="Toggle password visibility">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <label class="section-label">Select Your Interests</label>
+                    <div class="interests-grid">
+                        <label class="interest-checkbox">
+                            <input type="checkbox" name="interests" value="Technology">
+                            <span class="interest-btn"><i class="fa-solid fa-microchip"></i> Technology</span>
+                        </label>
+                        <label class="interest-checkbox">
+                            <input type="checkbox" name="interests" value="Cultural">
+                            <span class="interest-btn"><i class="fa-solid fa-masks-theater"></i> Cultural</span>
+                        </label>
+                        <label class="interest-checkbox">
+                            <input type="checkbox" name="interests" value="Sports">
+                            <span class="interest-btn"><i class="fa-solid fa-volleyball"></i> Sports</span>
+                        </label>
+                        <label class="interest-checkbox">
+                            <input type="checkbox" name="interests" value="Management">
+                            <span class="interest-btn"><i class="fa-solid fa-chart-line"></i> Management</span>
+                        </label>
+                        <label class="interest-checkbox">
+                            <input type="checkbox" name="interests" value="Design">
+                            <span class="interest-btn"><i class="fa-solid fa-pen-nib"></i> Design</span>
+                        </label>
+                        <label class="interest-checkbox">
+                            <input type="checkbox" name="interests" value="Entrepreneurship">
+                            <span class="interest-btn"><i class="fa-solid fa-lightbulb"></i> Startup</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="skills">Current Skills</label>
+                    <div class="input-field">
+                        <i class="fa-solid fa-code"></i>
+                        <input type="text" name="skills" id="skills" placeholder="e.g. coding, public speaking, figma">
+                    </div>
+                    <small class="helper-text">Separate skills with commas.</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    Register
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+            <button type="button" class="btn btn-outline btn-block google-btn">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" class="google-icon">
+                Register with Google
+            </button>
+            
+            <div class="login-prompt">
+                Already have an account? <a href="login">Login</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

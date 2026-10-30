@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Advisor Access — CampusConnect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-main: #0d0f1a;
+            --bg-surface: #151828;
+            --bg-card: #1c2033;
+            --accent: #6c63ff;
+            --accent-glow: rgba(108, 99, 255, 0.35);
+            --accent-light: #8b85ff;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --text-primary: #e8eaf0;
+            --text-secondary: #8a93b2;
+            --border: rgba(108, 99, 255, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background blobs */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(108,99,255,0.15) 0%, transparent 70%);
+            top: -150px; left: -150px;
+            border-radius: 50%;
+            animation: blob1 8s ease-in-out infinite alternate;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%);
+            bottom: -100px; right: -100px;
+            border-radius: 50%;
+            animation: blob2 10s ease-in-out infinite alternate;
+        }
+        @keyframes blob1 { to { transform: translate(60px, 80px) scale(1.1); } }
+        @keyframes blob2 { to { transform: translate(-40px, -60px) scale(1.15); } }
+
+        .login-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 440px;
+            padding: 1rem;
+        }
+
+        .login-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.8rem 2.4rem;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03);
+            animation: slideUp 0.5s ease;
+        }
+        @keyframes slideUp {
+            from { opacity:0; transform: translateY(24px); }
+            to   { opacity:1; transform: translateY(0); }
+        }
+
+        .login-icon {
+            width: 68px; height: 68px;
+            background: linear-gradient(135deg, var(--accent), #4a9eff);
+            border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 1.6rem;
+            box-shadow: 0 8px 30px var(--accent-glow);
+        }
+
+        .login-card h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-card p.subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .alert-error {
+            background: rgba(239,68,68,0.12);
+            border: 1px solid rgba(239,68,68,0.35);
+            color: #fca5a5;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            font-size: 0.88rem;
+            display: flex; align-items: center; gap: 0.6rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.4rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.02em;
+        }
+        .form-group .input-wrap {
+            position: relative;
+        }
+        .form-group .input-wrap i {
+            position: absolute;
+            left: 1rem; top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.85rem 1rem 0.85rem 2.6rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        .form-group input::placeholder { color: var(--text-secondary); }
+
+        .btn-access {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, var(--accent) 0%, #4a9eff 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+        .btn-access:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--accent-glow);
+        }
+        .btn-access:active { transform: translateY(0); }
+
+        .info-box {
+            margin-top: 1.6rem;
+            background: rgba(108,99,255,0.08);
+            border: 1px solid rgba(108,99,255,0.2);
+            border-radius: 10px;
+            padding: 0.9rem 1rem;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .info-box i { color: var(--accent-light); margin-right: 0.4rem; }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.4rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent-light); }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="login-icon">
+                <i class="fa-solid fa-chalkboard-teacher"></i>
+            </div>
+            <h1>Faculty Advisor Portal</h1>
+            <p class="subtitle">Enter your registered email to receive a secure access link for your assigned club.</p>
+
+            {% if error %}
+            <div class="alert-error">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form action="/advisor-login" method="POST" id="advisorLoginForm">
+                <div class="form-group">
+                    <label for="advisor_email">Faculty Email Address</label>
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input
+                            type="email"
+                            id="advisor_email"
+                            name="advisor_email"
+                            placeholder="professor@college.ac.in"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-access">
+                    <i class="fa-solid fa-link"></i>
+                    Send Access Link
+                </button>
+            </form>
+
+            <div class="info-box">
+                <i class="fa-solid fa-circle-info"></i>
+                <strong>How it works:</strong> Your unique access link will be generated instantly. In the current development build, the link is printed to the server terminal and you will be redirected automatically.
+            </div>
+
+            <a href="/" class="back-link">
+                <i class="fa-solid fa-arrow-left"></i> Back to CampusConnect
+            </a>
+        </div>
+    </div>
+</body>
+</html>
